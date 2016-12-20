@@ -1,0 +1,55 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Odenwald", "Odenwald\Odenwald.csproj", "{BB7A7712-CC11-4D95-83DC-A0AB28714860}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Input", "Input", "{938742A0-A235-4018-B727-6CF05C08E3EA}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Output", "Output", "{E841BE59-66EE-4A13-B0F6-5E867FDE6FA9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Odenwald.Input.WindowsPerformanceCounterAdapter", "Input\Odenwald.Input.WindowsPerformanceCounterAdapter\Odenwald.Input.WindowsPerformanceCounterAdapter.csproj", "{7DF024A1-50A5-4007-8B58-9CB04FBE8AAD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Odenwald.Output.ConsoleRunnerAdapter", "Output\Odenwald.Output.ConsoleRunnerAdapter\Odenwald.Output.ConsoleRunnerAdapter.csproj", "{E7092227-FB5B-40E9-882C-9F636335AFB7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Odenwald.Service", "Odenwald.Service\Odenwald.Service.csproj", "{AD130047-5631-4F12-B357-82B45E671C83}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Odenwald.Input.OpcuaAdapter", "Input\Odenwald.Input.OpcuaAdapter\Odenwald.Input.OpcuaAdapter.csproj", "{63E03DAA-660E-4C89-BA28-E1F6B72F854A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BB7A7712-CC11-4D95-83DC-A0AB28714860}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BB7A7712-CC11-4D95-83DC-A0AB28714860}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BB7A7712-CC11-4D95-83DC-A0AB28714860}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BB7A7712-CC11-4D95-83DC-A0AB28714860}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7DF024A1-50A5-4007-8B58-9CB04FBE8AAD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7DF024A1-50A5-4007-8B58-9CB04FBE8AAD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7DF024A1-50A5-4007-8B58-9CB04FBE8AAD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7DF024A1-50A5-4007-8B58-9CB04FBE8AAD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E7092227-FB5B-40E9-882C-9F636335AFB7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E7092227-FB5B-40E9-882C-9F636335AFB7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E7092227-FB5B-40E9-882C-9F636335AFB7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E7092227-FB5B-40E9-882C-9F636335AFB7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AD130047-5631-4F12-B357-82B45E671C83}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AD130047-5631-4F12-B357-82B45E671C83}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AD130047-5631-4F12-B357-82B45E671C83}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AD130047-5631-4F12-B357-82B45E671C83}.Release|Any CPU.Build.0 = Release|Any CPU
+		{63E03DAA-660E-4C89-BA28-E1F6B72F854A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{63E03DAA-660E-4C89-BA28-E1F6B72F854A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{63E03DAA-660E-4C89-BA28-E1F6B72F854A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{63E03DAA-660E-4C89-BA28-E1F6B72F854A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{7DF024A1-50A5-4007-8B58-9CB04FBE8AAD} = {938742A0-A235-4018-B727-6CF05C08E3EA}
+		{E7092227-FB5B-40E9-882C-9F636335AFB7} = {E841BE59-66EE-4A13-B0F6-5E867FDE6FA9}
+		{63E03DAA-660E-4C89-BA28-E1F6B72F854A} = {938742A0-A235-4018-B727-6CF05C08E3EA}
+	EndGlobalSection
+EndGlobal
