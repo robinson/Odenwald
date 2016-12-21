@@ -92,11 +92,11 @@ namespace Odenwald.Input.OpcuaAdapter
             get { return (string)base["CollectionType"]; }
             set { base["CollectionType"] = value; }
         }
-        [ConfigurationProperty("PollRate")]
-        public int PollRate
+        [ConfigurationProperty("PollInterval")]
+        public int PollInterval
         {
-            get { return (int)base["PollRate"]; }
-            set { base["PollRate"] = value; }
+            get { return (int)base["PollInterval"]; }
+            set { base["PollInterval"] = value; }
         }
         [ConfigurationProperty("MonitorResolution")]
         public int MonitorResolution

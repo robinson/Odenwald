@@ -8,10 +8,10 @@ using System.Threading.Tasks;
 
 namespace Odenwald.Input.OpcuaAdapter
 {
-    public class OpcUaMetric : IInputMetric
+    public class OpcuaMetric : IInputMetric, IOutputMetric
     {
         #region Attribute
-        static ILog l_logger = LogManager.GetLogger(typeof(OpcUaMetric));
+        static ILog l_logger = LogManager.GetLogger(typeof(OpcuaMetric));
         private readonly IDictionary<string, string> l_meta = new SortedDictionary<string, string>();
         #endregion
 
@@ -60,7 +60,7 @@ namespace Odenwald.Input.OpcuaAdapter
 
         public IMetric DeepCopy()
         {
-            var other = (OpcUaMetric)MemberwiseClone();
+            var other = (OpcuaMetric)MemberwiseClone();
             other.HostName = String.Copy(HostName);
             other.AdapterName = String.Copy(AdapterName);
             other.AdapterInstanceName = String.Copy(AdapterInstanceName);

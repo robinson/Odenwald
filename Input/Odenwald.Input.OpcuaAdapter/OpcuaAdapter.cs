@@ -1,4 +1,5 @@
-﻿using Opc.Ua;
+﻿using log4net;
+using Opc.Ua;
 using Opc.Ua.Client;
 using System;
 using System.Collections.Concurrent;
@@ -34,15 +35,17 @@ namespace Odenwald.Input.OpcuaAdapter
 
     public class OpcuaAdapter : IInputAdapter, IDisposable
     {
+        #region attributes
+        static ILog l_logger = LogManager.GetLogger(typeof(OpcuaAdapter));
         string l_opcuaUrl;
         ApplicationConfiguration l_applicationConfig;
         OpcuaAdapterConfig l_opcuaAdapterConfig;
         Session l_session;
         Subscription l_subscription;
-        BlockingCollection<OpcUaMetric> l_metricCollection;
+        BlockingCollection<OpcuaMetric> l_metricCollection;
         List<PolledMeasurement> PolledMeasurements;
         List<MonitoredMeasurement> MonitoredMeasurements;
-
+        #endregion
         public IInputProcessor Processor { get; set; }
 
 
@@ -98,27 +101,42 @@ namespace Odenwald.Input.OpcuaAdapter
 
         public void Start()
         {
-            l_session = Session.Create(l_applicationConfig, new ConfiguredEndpoint(null, new EndpointDescription(l_opcuaUrl)), true, "", 60000, null, null);//EndpointDescription need to be changed according to your OPC server
+            InitializeMeasurements();
+            l_session = Session.Create(l_applicationConfig, new ConfiguredEndpoint(null, new EndpointDescription(l_opcuaUrl)), true,"Odenwald", 60000, null, null);//EndpointDescription need to be changed according to your OPC server
             l_subscription = new Subscription(l_session.DefaultSubscription) { PublishingInterval = 1000 };
 
-            l_metricCollection = new BlockingCollection<OpcUaMetric>();
-
-            InitializeMeasurements();
+            l_metricCollection = new BlockingCollection<OpcuaMetric>();
+            StartMonitoring();
+            StartPolling();
         }
 
         public void Stop()
         {
+            //unsubscribe
+            l_subscription.RemoveItems(l_subscription.MonitoredItems);
+            l_subscription.Delete(true);
+            l_session.RemoveSubscription(l_subscription);
+            //close
             l_session.Close();
+            
         }
 
 
         public IList<IInputMetric> Read()
         {
-            List<OpcUaMetric> metricList = new List<OpcUaMetric>();
-            while (!l_metricCollection.IsCompleted)
+
+            //var list = l_metricCollection.Take(l_metricCollection.Count());
+            //l_logger.DebugFormat("Read {0} items.", list.Count());
+            //return new List<IInputMetric>(list.Cast<IInputMetric>());
+            if (l_metricCollection.Count <= 0)
+                return null;
+            List<OpcuaMetric> metricList = new List<OpcuaMetric>();
+
+
+            while (l_metricCollection.Count > 0)
             {
 
-                OpcUaMetric data = null;
+                OpcuaMetric data = null;
                 try
                 {
                     data = l_metricCollection.Take();
@@ -130,7 +148,9 @@ namespace Odenwald.Input.OpcuaAdapter
                     metricList.Add(data);
                 }
             }
-            return (IList<IInputMetric>)metricList; //TODO: not sure this works
+            l_logger.DebugFormat("Read {0} items.", metricList.Count);
+            return new List<IInputMetric>(metricList.Cast<IInputMetric>());
+            //return (IList<IInputMetric>)metricList; //TODO: not sure this works
 
         }
 
@@ -152,31 +172,25 @@ namespace Odenwald.Input.OpcuaAdapter
                             Path = item.Path,
                             MonitorResolution = item.MonitorResolution > 0 ? item.MonitorResolution : 0,
                             DeadbandAbsolute = item.DeadbandAbsolute > 0 ? item.DeadbandAbsolute : 0,
-                            DeadbandRelative = item.DeadbandRelative > 0 ? item.DeadbandRelative : 0
+                            DeadbandRelative = item.DeadbandRelative > 0 ? item.DeadbandRelative : 0,
+                            DataType = item.DataType
                         };
 
                         MonitoredMeasurements.Add(monitoredpoint);
                         break;
                     case "polled":
-                        if (item.PollRate >= 1 && item.PollRate <= 60)
+                        var polledPoint = new PolledMeasurement()
                         {
-                            int pollInterval = Convert.ToInt32(60 / item.PollRate);
-                            while (60 % pollInterval != 0)
-                            {
-                                pollInterval += 1;
-                            }
-                            var polledPoint = new PolledMeasurement()
-                            {
-                                Name = item.Name,
-                                NodeId = item.NodeId,
-                                Path = item.Path,
-                                DeadbandAbsolute = item.DeadbandAbsolute > 0 ? item.DeadbandAbsolute : 0,
-                                DeadbandRelative = item.DeadbandRelative > 0 ? item.DeadbandRelative : 0,
-                                PollInterval = pollInterval
-                            };
+                            Name = item.Name,
+                            NodeId = item.NodeId,
+                            Path = item.Path,
+                            DeadbandAbsolute = item.DeadbandAbsolute > 0 ? item.DeadbandAbsolute : 0,
+                            DeadbandRelative = item.DeadbandRelative > 0 ? item.DeadbandRelative : 0,
+                            PollInterval = item.PollInterval,
+                            DataType = item.DataType
+                        };
 
-                            PolledMeasurements.Add(polledPoint);
-                        }
+                        PolledMeasurements.Add(polledPoint);
 
                         break;
                     default:
@@ -208,15 +222,12 @@ namespace Odenwald.Input.OpcuaAdapter
                     var t = p.Value.WrappedValue.Value;
                     MonitorData(item, t);
                 };
-            }
-
-            //var list = new List<MonitoredItem> { new MonitoredItem(subscription.DefaultItem) { DisplayName = "ServerStatusCurrentTime", StartNodeId = "i=2258" } };
-            //list.ForEach(i => i.Notification += OnNotification);
+            }            
 
         }
         void MonitorData(MonitoredMeasurement measurement, object NewValue)
         {
-            OpcUaMetric metric = new OpcUaMetric();
+            OpcuaMetric metric = new OpcuaMetric();
             metric.HostName = "localhost";
             metric.AdapterInstanceName = "OpcuaAdapterInstance";
             metric.AdapterName = "OpcuaAdapter";
@@ -250,7 +261,7 @@ namespace Odenwald.Input.OpcuaAdapter
         }
         void ReadMeasurement(PolledMeasurement measurement)
         {
-            OpcUaMetric metric = new OpcUaMetric();
+            OpcuaMetric metric = new OpcuaMetric();
             metric.HostName = "localhost";
             metric.AdapterInstanceName = "OpcuaAdapterInstance";
             metric.AdapterName = "OpcuaAdapter";
@@ -292,9 +303,12 @@ namespace Odenwald.Input.OpcuaAdapter
 
         public void Dispose()
         {
-            l_subscription.Dispose();
-            l_session.Dispose();
-
+            if (l_session != null)
+            {
+                l_session.RemoveSubscriptions(l_session.Subscriptions.ToList());
+                l_session.Close();
+                l_session.Dispose();
+            }
             GC.SuppressFinalize(this);
         }
 

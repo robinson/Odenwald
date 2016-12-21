@@ -17,7 +17,16 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Odenwald.Service", "Odenwal
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Odenwald.Input.OpcuaAdapter", "Input\Odenwald.Input.OpcuaAdapter\Odenwald.Input.OpcuaAdapter.csproj", "{63E03DAA-660E-4C89-BA28-E1F6B72F854A}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{BC6D364C-E228-46F3-B0DC-36E10395334B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Odenwald.Input.OpcuaAdapter.Tests", "Tests\Odenwald.Input.OpcuaAdapter.Tests\Odenwald.Input.OpcuaAdapter.Tests.csproj", "{A94307BD-361C-4616-829D-A197EF9D94E8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Odenwald.Output.InfluxDbAdapter", "Output\Odenwald.Output.InfluxDbAdapter\Odenwald.Output.InfluxDbAdapter.csproj", "{084BE120-923F-4517-850C-17D1D5590AC9}"
+EndProject
 Global
+	GlobalSection(Performance) = preSolution
+		HasPerformanceSessions = true
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
@@ -43,6 +52,14 @@ Global
 		{63E03DAA-660E-4C89-BA28-E1F6B72F854A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{63E03DAA-660E-4C89-BA28-E1F6B72F854A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{63E03DAA-660E-4C89-BA28-E1F6B72F854A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A94307BD-361C-4616-829D-A197EF9D94E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A94307BD-361C-4616-829D-A197EF9D94E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A94307BD-361C-4616-829D-A197EF9D94E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A94307BD-361C-4616-829D-A197EF9D94E8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{084BE120-923F-4517-850C-17D1D5590AC9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{084BE120-923F-4517-850C-17D1D5590AC9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{084BE120-923F-4517-850C-17D1D5590AC9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{084BE120-923F-4517-850C-17D1D5590AC9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -51,5 +68,7 @@ Global
 		{7DF024A1-50A5-4007-8B58-9CB04FBE8AAD} = {938742A0-A235-4018-B727-6CF05C08E3EA}
 		{E7092227-FB5B-40E9-882C-9F636335AFB7} = {E841BE59-66EE-4A13-B0F6-5E867FDE6FA9}
 		{63E03DAA-660E-4C89-BA28-E1F6B72F854A} = {938742A0-A235-4018-B727-6CF05C08E3EA}
+		{A94307BD-361C-4616-829D-A197EF9D94E8} = {BC6D364C-E228-46F3-B0DC-36E10395334B}
+		{084BE120-923F-4517-850C-17D1D5590AC9} = {E841BE59-66EE-4A13-B0F6-5E867FDE6FA9}
 	EndGlobalSection
 EndGlobal

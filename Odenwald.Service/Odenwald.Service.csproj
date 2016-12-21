@@ -65,13 +65,17 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
+    <None Include="app.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>xcopy "$(SolutionDir)Output\Odenwald.Output.ConsoleRunnerAdapter\bin\$(ConfigurationName)\*.dll" .\*.* /Y
-xcopy "$(SolutionDir)Output\Odenwald.Output.ConsoleRunnerAdapter\bin\$(ConfigurationName)\*.pdb" .\*.* /Y</PostBuildEvent>
+xcopy "$(SolutionDir)Output\Odenwald.Output.ConsoleRunnerAdapter\bin\$(ConfigurationName)\*.pdb" .\*.* /Y
+xcopy "$(SolutionDir)Input\Odenwald.Input.OpcuaAdapter\bin\$(ConfigurationName)\*.dll" .\*.* /Y
+xcopy "$(SolutionDir)Input\Odenwald.Input.OpcuaAdapter\bin\$(ConfigurationName)\*.pdb" .\*.* /Y</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

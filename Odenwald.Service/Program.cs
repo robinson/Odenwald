@@ -30,6 +30,7 @@ namespace Odenwald.Runner
                 odenWaldService.StartService();
                 Console.WriteLine("*** Enter Ctrl-C to exit: ***");
                 Console.ReadLine();
+                odenWaldService.StopService();
             }
             else
             {

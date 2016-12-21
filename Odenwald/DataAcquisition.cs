@@ -26,6 +26,9 @@ namespace Odenwald
         CancellationTokenSource l_readCancelToken;
         CancellationTokenSource l_writeCancelToken;
         CancellationTokenSource l_processCancelToken;
+
+        EventWaitHandle eventWaitReadHandle = new EventWaitHandle(false, EventResetMode.AutoReset, Guid.NewGuid().ToString());
+        EventWaitHandle eventWaitWriteHandle = new EventWaitHandle(false, EventResetMode.AutoReset, Guid.NewGuid().ToString());
         #endregion
 
         #region .ctor
@@ -59,14 +62,28 @@ namespace Odenwald
         public void ConfigureAll()
         {
             l_logger.Debug("ConfigureAll() begin");
-            Parallel.ForEach(l_inputAdapters, ad => ad.Configure());
-            Parallel.ForEach(l_outputAdapters, ad => ad.Configure());
+            //Parallel.ForEach(l_inputAdapters, ad => ad.Configure());
+            //Parallel.ForEach(l_outputAdapters, ad => ad.Configure());
+            foreach (var inputAdapter in l_inputAdapters)
+            {
+                inputAdapter.Configure();
+            }
+            foreach (var ouputAdapter in l_outputAdapters)
+            {
+                ouputAdapter.Configure();
+            }
         }
         public void StartAll()
         {
             l_logger.Debug("StartAll() begin");
-            Parallel.ForEach(l_inputAdapters, ad => ad.Start());
-            Parallel.ForEach(l_outputAdapters, ad => ad.Start());
+            foreach (var inputAdapter in l_inputAdapters)
+            {
+                inputAdapter.Start();
+            }
+            foreach (var ouputAdapter in l_outputAdapters)
+            {
+                ouputAdapter.Start();
+            }        
 
             WriteOutput();
             ReadInput();
@@ -79,6 +96,44 @@ namespace Odenwald
 
             var task = Task.Factory.StartNew((Func<Task>)(async () =>  // <- marked async
             {
+                do
+                {
+                    eventWaitReadHandle.WaitOne(1);
+                    for (int index = 0; index < l_inputAdapters.Count; index++)
+                    {
+                        var adapter = l_inputAdapters[index];
+                        IList<IInputMetric> metrics = adapter.Read();
+
+                        if (metrics == null || !metrics.Any())
+                        {
+                            l_logger.Debug("metric null!");
+                            continue;
+                        }
+                        l_logger.DebugFormat("read from adapter {0} with {1} metrics", index, metrics.Count); 
+                        for (int i = 0; i < metrics.Count; i++)
+                        {
+                            var metric = metrics[i];
+                            adapter.Processor.ProcessInput(ref metric);
+                            l_metricQueue.Enqueue(metric);
+                            while (l_metricQueue.Count >= l_maxQueueSize)
+                            {
+                                // When queue size grows above the Max limit, 
+                                // old entries are removed
+                                IInputMetric inputMetric;
+                                l_metricQueue.TryDequeue(out inputMetric);
+                                if ((++numDatasDropped % 1000) == 0)
+                                {
+                                    l_logger.ErrorFormat(
+                                        "Number of data dropped : {0}",
+                                        numDatasDropped);
+                                }
+                            }
+                        }
+                    }
+                    if (l_writeInterval > 0)
+                        await Task.Delay(l_readInterval * 1000, l_readCancelToken.Token);
+                } while (true);
+                /*
                 while (true)
                 {
                     //Parallel.For(0, l_inputAdapters.Count, index =>
@@ -112,12 +167,13 @@ namespace Odenwald
                     {
                         var adapter = l_inputAdapters[index];
                         IList<IInputMetric> metrics = adapter.Read();
-                        l_logger.DebugFormat("read from adapter {0}", index);
+
                         if (metrics == null || !metrics.Any())
                         {
                             l_logger.Debug("metric null!");
                             continue;
                         }
+                        else { l_logger.DebugFormat("read from adapter {0} with {1} metrics", index,metrics.Count); }
                         //Parallel.ForEach(metrics, m =>
                         //{
                         //    adapter.Processor.ProcessInput(ref m);
@@ -141,7 +197,6 @@ namespace Odenwald
                             var metric = metrics[i];
                             adapter.Processor.ProcessInput(ref metric);
                             l_metricQueue.Enqueue(metric);
-                            l_logger.DebugFormat("enqueue the metric: {0}", metric.Key);
                             while (l_metricQueue.Count >= l_maxQueueSize)
                             {
                                 // When queue size grows above the Max limit, 
@@ -157,8 +212,9 @@ namespace Odenwald
                             }
                         }
                     }
-                    await Task.Delay(TimeSpan.FromMilliseconds(l_readInterval * 1000), l_readCancelToken.Token); // <- await with cancellation
-                }
+                    if (l_writeInterval > 0)
+                        await Task.Delay(l_readInterval * 1000, l_readCancelToken.Token); // <- await with cancellation
+                }*/
             }), l_readCancelToken.Token);
         }
 
@@ -168,95 +224,85 @@ namespace Odenwald
             bool needToFlush = false;
             var task = Task.Factory.StartNew((Func<Task>)(async () =>  // <- marked async
             {
-                while (true)
+                do
                 {
+                    eventWaitWriteHandle.WaitOne(1);
                     try
                     {
-                        while (l_metricQueue.Count > 0)
+                        IInputMetric inputMetric;
+
+                        if (l_metricQueue.TryDequeue(out inputMetric))
+                        {                            
+                            //Parallel.For(0, l_outputAdapters.Count, index =>
+                            //  {   
+                            //      var adapter = l_outputAdapters[index];
+                            //      if (inputMetric.GetType().IsAssignableFrom((Type)adapter.Processor.RawMetric.GetType()))
+                            //      {
+                            //          needToFlush = true;
+                            //          adapter.Processor.ProcessInput(inputMetric);
+                            //          adapter.Write(adapter.Processor.OutputMetric);
+                            //          l_logger.DebugFormat("adapter {0} wrote", index);
+                            //      }
+                            //      if (index == l_outputAdapters.Count - 1)
+                            //      {
+                            //          //last adapter, not match with any metric then remove
+                            //          l_metricQueue.TryDequeue(out inputMetric);
+                            //      }
+                            //  });
+                            //Parallel.ForEach(l_outputAdapters, adapter =>
+                            //{
+                            //    if (inputMetric.GetType().IsAssignableFrom((Type)adapter.Processor.RawMetric.GetType()))
+                            //    {
+                            //        needToFlush = true;
+                            //        inputMetric.Interval = l_readInterval;
+                            //        inputMetric.AddMetaData(l_metaData);
+
+                            //        adapter.Processor.ProcessInput(inputMetric);
+                            //        adapter.Write(adapter.Processor.OutputMetric);
+                            //        //l_logger.DebugFormat("adapter {0} wrote", adapter);//TODO: give adapter a name, for debug purpose
+                            //    }
+                            //    if (i == l_outputAdapters.Count - 1)
+                            //    {
+                            //        //last adapter, not match with any metric then remove
+                            //        l_metricQueue.TryDequeue(out inputMetric);
+                            //    }
+                            //});
+                            inputMetric.Interval = l_readInterval;
+                            inputMetric.AddMetaData(l_metaData);
+                            for (int i = 0; i < l_outputAdapters.Count; i++)
+                            {
+                                var adapter = l_outputAdapters[i];
+                                if (inputMetric.GetType().IsAssignableFrom((Type)adapter.Processor.RawMetric.GetType()))
+                                {
+                                    needToFlush = true;
+                                    adapter.Processor.ProcessInput(inputMetric);
+                                    adapter.Write(adapter.Processor.OutputMetric);
+                                    l_logger.DebugFormat("adapter {0} wrote", i);
+                                }
+                                if (i == l_outputAdapters.Count - 1)
+                                {
+                                    //last adapter, not match with any metric then remove
+                                    l_metricQueue.TryDequeue(out inputMetric);
+                                }
+                            }
+                        }
+                        if (needToFlush)
                         {
-
-                            IInputMetric inputMetric;
-
-                            if (l_metricQueue.TryDequeue(out inputMetric))
+                            needToFlush = false;
+                            foreach (IOutputAdapter adapter in l_outputAdapters)
                             {
-                                inputMetric.Interval = l_readInterval;
-                                inputMetric.AddMetaData(l_metaData);
-                                //Parallel.For(0, l_outputAdapters.Count, index =>
-                                //  {   
-                                //      var adapter = l_outputAdapters[index];
-                                //      if (inputMetric.GetType().IsAssignableFrom((Type)adapter.Processor.RawMetric.GetType()))
-                                //      {
-                                //          needToFlush = true;
-                                //          adapter.Processor.ProcessInput(inputMetric);
-                                //          adapter.Write(adapter.Processor.OutputMetric);
-                                //          l_logger.DebugFormat("adapter {0} wrote", index);
-                                //      }
-                                //      if (index == l_outputAdapters.Count - 1)
-                                //      {
-                                //          //last adapter, not match with any metric then remove
-                                //          l_metricQueue.TryDequeue(out inputMetric);
-                                //      }
-                                //  });
-                                //Parallel.ForEach(l_outputAdapters, adapter =>
-                                //{
-                                //    if (inputMetric.GetType().IsAssignableFrom((Type)adapter.Processor.RawMetric.GetType()))
-                                //    {
-                                //        needToFlush = true;
-                                //        inputMetric.Interval = l_readInterval;
-                                //        inputMetric.AddMetaData(l_metaData);
-
-                                //        adapter.Processor.ProcessInput(inputMetric);
-                                //        adapter.Write(adapter.Processor.OutputMetric);
-                                //        //l_logger.DebugFormat("adapter {0} wrote", adapter);//TODO: give adapter a name, for debug purpose
-                                //    }
-                                //    if (i == l_outputAdapters.Count - 1)
-                                //    {
-                                //        //last adapter, not match with any metric then remove
-                                //        l_metricQueue.TryDequeue(out inputMetric);
-                                //    }
-                                //});
-                                inputMetric.Interval = l_readInterval;
-                                inputMetric.AddMetaData(l_metaData);
-                                for (int i = 0; i < l_outputAdapters.Count; i++)
-                                {
-                                    var adapter = l_outputAdapters[i];
-                                    if (inputMetric.GetType().IsAssignableFrom((Type)adapter.Processor.RawMetric.GetType()))
-                                    {
-                                        needToFlush = true;
-                                        adapter.Processor.ProcessInput(inputMetric);
-                                        adapter.Write(adapter.Processor.OutputMetric);
-                                        l_logger.DebugFormat("adapter {0} wrote", i);
-                                    }
-                                    if (i == l_outputAdapters.Count - 1)
-                                    {
-                                        //last adapter, not match with any metric then remove
-                                        l_metricQueue.TryDequeue(out inputMetric);
-                                    }
-                                }
+                                adapter.Flush();
                             }
-                            else
-                            {
-                                //try dequeue again.
-                                l_metricQueue.TryDequeue(out inputMetric);
-                            }
-                            if (needToFlush)
-                            {
-                                needToFlush = false;
-                                foreach (IOutputAdapter adapter in l_outputAdapters)
-                                {
-                                    adapter.Flush();
-                                }
-                            }
-
                         }
                     }
                     catch (Exception ex)
                     {
                         l_logger.ErrorFormat("Write() got exception : {0}", ex);
                     }
-
-                    await Task.Delay(TimeSpan.FromMilliseconds(l_writeInterval * 1000), l_writeCancelToken.Token); // <- await with cancellation, delay 1 secs
-                }
+                    if (l_writeInterval > 0)
+                        await Task.Delay(l_writeInterval * 1000, l_writeCancelToken.Token); // <- await with cancellation, delay 1 secs
+                } while (true);
+               
             }), l_writeCancelToken.Token);
         }
         void RemoveExpired()
@@ -283,8 +329,16 @@ namespace Odenwald
             l_writeCancelToken.Cancel();
             l_processCancelToken.Cancel();
 
-            Parallel.ForEach(l_inputAdapters, ad => ad.Stop());
-            Parallel.ForEach(l_outputAdapters, ad => ad.Stop());
+            foreach (var inputAdapter in l_inputAdapters)
+            {
+                inputAdapter.Stop();
+            }
+            foreach (var ouputAdapter in l_outputAdapters)
+            {
+                ouputAdapter.Stop();
+            }
+            //Parallel.ForEach(l_inputAdapters, ad => ad.Stop());
+            //Parallel.ForEach(l_outputAdapters, ad => ad.Stop());
         }
 
         public void Dispose()

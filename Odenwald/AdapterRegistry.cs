@@ -82,7 +82,7 @@ namespace Odenwald
                     continue;
                 }
                 var adapter = (IAdapter)Activator.CreateInstance(classType);
-                if (adapter is IInputAdapter && adapter != null)
+                if (adapter != null)
                 {
                     var outputAdapter = adapter as IOutputAdapter;
                     Type processorType = Type.GetType(entry.Value.Processor);
