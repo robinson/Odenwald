@@ -30,7 +30,7 @@ namespace Odenwald.Input.OpcuaAdapter
 
         public int Interval { get; set; }
 
-        public string Key { get; }
+        public string Key { get { return Measurement.Name; } }
 
 
         public IDictionary<string, string> MetaData { get; set; }

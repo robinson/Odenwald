@@ -123,11 +123,7 @@ namespace Odenwald.Input.OpcuaAdapter
 
 
         public IList<IInputMetric> Read()
-        {
-
-            //var list = l_metricCollection.Take(l_metricCollection.Count());
-            //l_logger.DebugFormat("Read {0} items.", list.Count());
-            //return new List<IInputMetric>(list.Cast<IInputMetric>());
+        {   
             if (l_metricCollection.Count <= 0)
                 return null;
             List<OpcuaMetric> metricList = new List<OpcuaMetric>();
@@ -150,7 +146,6 @@ namespace Odenwald.Input.OpcuaAdapter
             }
             l_logger.DebugFormat("Read {0} items.", metricList.Count);
             return new List<IInputMetric>(metricList.Cast<IInputMetric>());
-            //return (IList<IInputMetric>)metricList; //TODO: not sure this works
 
         }
 
