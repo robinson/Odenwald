@@ -102,7 +102,7 @@ namespace Odenwald.Input.OpcuaAdapter
         public void Start()
         {
             InitializeMeasurements();
-            l_session = Session.Create(l_applicationConfig, new ConfiguredEndpoint(null, new EndpointDescription(l_opcuaUrl)), true,"Odenwald", 60000, null, null);//EndpointDescription need to be changed according to your OPC server
+            l_session = Session.Create(l_applicationConfig, new ConfiguredEndpoint(null, new EndpointDescription(l_opcuaUrl)), true, "Odenwald", 60000, null, null);//EndpointDescription need to be changed according to your OPC server
             l_subscription = new Subscription(l_session.DefaultSubscription) { PublishingInterval = 1000 };
 
             l_metricCollection = new BlockingCollection<OpcuaMetric>();
@@ -118,12 +118,12 @@ namespace Odenwald.Input.OpcuaAdapter
             l_session.RemoveSubscription(l_subscription);
             //close
             l_session.Close();
-            
+
         }
 
 
         public IList<IInputMetric> Read()
-        {   
+        {
             if (l_metricCollection.Count <= 0)
                 return null;
             List<OpcuaMetric> metricList = new List<OpcuaMetric>();
@@ -214,20 +214,20 @@ namespace Odenwald.Input.OpcuaAdapter
                 monitoredItem.Notification += (monitored, args) =>
                 {
                     var p = (MonitoredItemNotification)args.NotificationValue;
-                    var t = p.Value.WrappedValue.Value;
-                    MonitorData(item, t);
+                    MonitorData(item, p.Value);
                 };
-            }            
+            }
 
         }
-        void MonitorData(MonitoredMeasurement measurement, object NewValue)
+        void MonitorData(MonitoredMeasurement measurement, DataValue NewValue)
         {
             OpcuaMetric metric = new OpcuaMetric();
             metric.HostName = "localhost";
             metric.AdapterInstanceName = "OpcuaAdapterInstance";
             metric.AdapterName = "OpcuaAdapter";
 
-            metric.OpcValue = NewValue;
+            metric.Timestamp = NewValue.SourceTimestamp;
+            metric.OpcValue = NewValue.WrappedValue.Value;
             metric.TypeName = "gauge";
             metric.TypeInstanceName = "gauge";
             metric.Interval = measurement.MonitorResolution;
@@ -246,11 +246,11 @@ namespace Odenwald.Input.OpcuaAdapter
             {
                 var task = Task.Factory.StartNew((Func<Task>)(async () =>  // <- marked async
                 {
-                    while (true)
+                    do
                     {
                         ReadMeasurement(item);
-                        await Task.Delay(TimeSpan.FromMilliseconds(item.PollInterval)); // <- await with cancellation
-                    }
+                        await Task.Delay(TimeSpan.FromMilliseconds(item.PollInterval));
+                    } while (true);
                 }));
             }
         }
@@ -261,7 +261,7 @@ namespace Odenwald.Input.OpcuaAdapter
             metric.AdapterInstanceName = "OpcuaAdapterInstance";
             metric.AdapterName = "OpcuaAdapter";
 
-            
+
             metric.TypeName = "gauge";
             metric.TypeInstanceName = "gauge";
             metric.Interval = measurement.PollInterval;
@@ -271,7 +271,7 @@ namespace Odenwald.Input.OpcuaAdapter
             double epoch = t.TotalMilliseconds / 1000;
             metric.Epoch = Math.Round(epoch, 3);
 
-            
+
 
             var readValue = new ReadValueId
             {
@@ -291,9 +291,8 @@ namespace Odenwald.Input.OpcuaAdapter
             var val = results[0];
             metric.Measurement.LastOpcstatus = val.StatusCode.ToString();
             metric.OpcValue = val.Value;
-
+            metric.Timestamp = val.SourceTimestamp;
             l_metricCollection.Add(metric);
-
         }
 
         public void Dispose()

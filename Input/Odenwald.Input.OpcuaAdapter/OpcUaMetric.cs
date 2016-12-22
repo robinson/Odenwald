@@ -78,6 +78,6 @@ namespace Odenwald.Input.OpcuaAdapter
 
         public MeasurementDto Measurement { get; set; }
 
-
+        public DateTime Timestamp { get; set; }
     }
 }

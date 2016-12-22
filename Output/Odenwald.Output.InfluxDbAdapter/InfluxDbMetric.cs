@@ -48,5 +48,6 @@ namespace Odenwald.Output.InfluxDbAdapter
         {
             throw new NotImplementedException();
         }
+        
     }
 }
