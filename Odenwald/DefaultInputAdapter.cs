@@ -34,10 +34,7 @@ namespace Odenwald
             metric.Values = new double[] { DateTime.Now.ToOADate() };
             metric.TypeName = "gauge";
             metric.TypeInstanceName = "gauge";
-
-            TimeSpan t = DateTime.UtcNow - new DateTime(1970, 1, 1);
-            double epoch = t.TotalMilliseconds / 1000;
-            metric.Epoch = Math.Round(epoch, 3);
+            metric.Epoch = Util.GetNow();
 
 
             return new List<IInputMetric> { metric };

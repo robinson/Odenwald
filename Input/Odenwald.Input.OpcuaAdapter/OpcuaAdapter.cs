@@ -233,9 +233,7 @@ namespace Odenwald.Input.OpcuaAdapter
             metric.Interval = measurement.MonitorResolution;
 
             metric.Measurement = (MeasurementDto)measurement;
-            TimeSpan t = DateTime.UtcNow - new DateTime(1970, 1, 1);
-            double epoch = t.TotalMilliseconds / 1000;
-            metric.Epoch = Math.Round(epoch, 3);
+            metric.Epoch = Util.GetNow();
 
             l_metricCollection.Add(metric);
         }
@@ -267,9 +265,7 @@ namespace Odenwald.Input.OpcuaAdapter
             metric.Interval = measurement.PollInterval;
 
             metric.Measurement = (MeasurementDto)measurement;
-            TimeSpan t = DateTime.UtcNow - new DateTime(1970, 1, 1);
-            double epoch = t.TotalMilliseconds / 1000;
-            metric.Epoch = Math.Round(epoch, 3);
+            metric.Epoch = Util.GetNow();
 
 
 
