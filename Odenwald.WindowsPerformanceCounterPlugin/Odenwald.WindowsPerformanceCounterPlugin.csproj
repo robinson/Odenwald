@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{E7092227-FB5B-40E9-882C-9F636335AFB7}</ProjectGuid>
+    <ProjectGuid>{623527DA-7F19-4326-98D8-EA833857367C}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Odenwald.Output.ConsoleRunnerAdapter</RootNamespace>
-    <AssemblyName>Odenwald.Output.ConsoleRunnerAdapter</AssemblyName>
+    <RootNamespace>Odenwald.WindowsPerformanceCounterPlugin</RootNamespace>
+    <AssemblyName>Odenwald.WindowsPerformanceCounterPlugin</AssemblyName>
     <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -34,7 +34,9 @@
       <HintPath>..\..\packages\log4net.2.0.5\lib\net45-full\log4net.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -44,23 +46,23 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ConsoleRunnerAdapter.cs" />
+    <Compile Include="Config\WindowsPerformanceCounterPluginConfig.cs" />
+    <Compile Include="WindowsPerformanceCounterPlugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Odenwald\Odenwald.csproj">
+    <None Include="Config\WindowsPerformanceCounter.config">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Odenwald\Odenwald.csproj">
       <Project>{bb7a7712-cc11-4d95-83dc-a0ab28714860}</Project>
       <Name>Odenwald</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>
-    </PostBuildEvent>
-  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

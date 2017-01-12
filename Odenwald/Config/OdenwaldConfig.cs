@@ -4,7 +4,8 @@ using System.Configuration;
 
 namespace Odenwald
 {
-    internal class OdenwaldConfigHelper
+    
+    public class OdenwaldConfigHelper
     {
         public static IDictionary<string, string> GetMetaData()
         {
@@ -25,19 +26,19 @@ namespace Odenwald
 
     public class OdenwaldConfig : ConfigurationSection
     {
-        [ConfigurationProperty("Settings", IsRequired = true)]
-        public SettingsConfig Settings
+        [ConfigurationProperty("GeneralSettings", IsRequired = true)]
+        public GeneralSettingsConfig GeneralSettings
         {
-            get { return (SettingsConfig)base["Settings"]; }
-            set { base["Settings"] = value; }
+            get { return (GeneralSettingsConfig)base["GeneralSettings"]; }
+            set { base["GeneralSettings"] = value; }
         }
 
-        [ConfigurationProperty("Adapters", IsRequired = true)]
-        [ConfigurationCollection(typeof(AdapterCollection), AddItemName = "Adapter")]
-        public AdapterCollection Adapters
+        [ConfigurationProperty("Plugins", IsRequired = true)]
+        [ConfigurationCollection(typeof(PluginCollection), AddItemName = "Plugin")]
+        public PluginCollection Plugins
         {
-            get { return (AdapterCollection)base["Adapters"]; }
-            set { base["Adapters"] = value; }
+            get { return (PluginCollection)base["Plugins"]; }
+            set { base["Plugins"] = value; }
         }
 
         [ConfigurationProperty("MetaData", IsRequired = false)]
@@ -48,25 +49,20 @@ namespace Odenwald
             set { base["MetaData"] = value; }
         }
 
-        public static OdenwaldConfig GetConfig()
+        public static OdenwaldConfigHelper GetConfig()
         {
-            return (OdenwaldConfig)ConfigurationManager.GetSection("OdenwaldConfig") ?? new OdenwaldConfig();
+            return (OdenwaldConfigHelper)ConfigurationManager.GetSection("OdenwaldConfig") ?? new OdenwaldConfigHelper();
         }
 
-        public sealed class SettingsConfig : ConfigurationElement
+        public sealed class GeneralSettingsConfig : ConfigurationElement
         {
-            [ConfigurationProperty("ReadInterval", IsRequired = true)]
-            public int ReadInterval
+            [ConfigurationProperty("Interval", IsRequired = true)]
+            public int Interval
             {
-                get { return (int)base["ReadInterval"]; }
-                set { base["ReadInterval"] = value; }
+                get { return (int)base["Interval"]; }
+                set { base["Interval"] = value; }
             }
-            [ConfigurationProperty("WriteInterval", IsRequired = true)]
-            public int WriteInterval
-            {
-                get { return (int)base["WriteInterval"]; }
-                set { base["WriteInterval"] = value; }
-            }
+
             [ConfigurationProperty("Timeout", IsRequired = true)]
             public int Timeout
             {
@@ -82,22 +78,22 @@ namespace Odenwald
             }
         }
 
-        public sealed class AdapterCollection : ConfigurationElementCollection
+        public sealed class PluginCollection : ConfigurationElementCollection
         {
             protected override ConfigurationElement CreateNewElement()
             {
-                return new AdapterConfig();
+                return new PluginConfig();
             }
 
             protected override object GetElementKey(ConfigurationElement element)
             {
-                return (((AdapterConfig)element).UniqueId);
+                return (((PluginConfig)element).UniqueId);
             }
         }
 
-        public sealed class AdapterConfig : ConfigurationElement
+        public sealed class PluginConfig : ConfigurationElement
         {
-            public AdapterConfig()
+            public PluginConfig()
             {
                 UniqueId = Guid.NewGuid();
             }
@@ -110,36 +106,12 @@ namespace Odenwald
                 get { return (string)base["Name"]; }
                 set { base["Name"] = value; }
             }
-            [ConfigurationProperty("Type", IsRequired = true)]
-            public string Type
-            {
-                get { return (string)base["Type"]; }
-                set { base["Type"] = value; }
-            }
 
             [ConfigurationProperty("Class", IsRequired = true)]
             public string Class
             {
                 get { return (string)base["Class"]; }
                 set { base["Class"] = value; }
-            }
-            [ConfigurationProperty("Processor")]
-            public string Processor
-            {
-                get { return (string)base["Processor"]; }
-                set { base["Processor"] = value; }
-            }
-            [ConfigurationProperty("InputMetric")]
-            public string InputMetric
-            {
-                get { return (string)base["InputMetric"]; }
-                set { base["InputMetric"] = value; }
-            }
-            [ConfigurationProperty("OutputMetric")]
-            public string OutputMetric
-            {
-                get { return (string)base["OutputMetric"]; }
-                set { base["OutputMetric"] = value; }
             }
 
             [ConfigurationProperty("Enable", IsRequired = true)]
@@ -187,3 +159,18 @@ namespace Odenwald
         }
     }
 }
+
+// ----------------------------------------------------------------------------
+// Copyright (C) 2015 Bloomberg Finance L.P.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+// http://www.apache.org/licenses/LICENSE-2.0
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+// ----------------------------- END-OF-FILE ----------------------------------

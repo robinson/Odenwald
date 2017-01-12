@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace Odenwald
 {
-    public interface IInputAdapter: IAdapter
+    public interface IMetricsPlugin
     {
-        IList<IInputMetric> Read();
-        IInputProcessor Processor { get; set; }
+        void Configure();
+        void Start();
+        void Stop();
     }
 }

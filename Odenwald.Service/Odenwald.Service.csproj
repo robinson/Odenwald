@@ -11,6 +11,21 @@
     <AssemblyName>Odenwald.Service</AssemblyName>
     <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -20,6 +35,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <UseVSHostingProcess>true</UseVSHostingProcess>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -70,12 +86,26 @@
     </None>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.6">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4.6 %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy "$(SolutionDir)Output\Odenwald.Output.ConsoleRunnerAdapter\bin\$(ConfigurationName)\*.dll" .\*.* /Y
-xcopy "$(SolutionDir)Output\Odenwald.Output.ConsoleRunnerAdapter\bin\$(ConfigurationName)\*.pdb" .\*.* /Y
-xcopy "$(SolutionDir)Input\Odenwald.Input.OpcuaAdapter\bin\$(ConfigurationName)\*.dll" .\*.* /Y
-xcopy "$(SolutionDir)Input\Odenwald.Input.OpcuaAdapter\bin\$(ConfigurationName)\*.pdb" .\*.* /Y</PostBuildEvent>
+    <PostBuildEvent>xcopy "$(SolutionDir)Odenwald.ConsolePlugin\bin\$(ConfigurationName)\*.dll" .\*.* /Y
+xcopy "$(SolutionDir)Odenwald.ConsolePlugin\bin\$(ConfigurationName)\*.pdb" .\*.* /Y
+xcopy "$(SolutionDir)Odenwald.WindowsPerformanceCounterPlugin\bin\$(ConfigurationName)\*.dll" .\*.* /Y
+xcopy "$(SolutionDir)Odenwald.WindowsPerformanceCounterPlugin\bin\$(ConfigurationName)\*.pdb" .\*.* /Y
+xcopy "$(SolutionDir)Odenwald.OpcUaPlugin\bin\$(ConfigurationName)\*.dll" .\*.* /Y
+xcopy "$(SolutionDir)Odenwald.OpcUaPlugin\bin\$(ConfigurationName)\*.pdb" .\*.* /Y</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Odenwald.Input.OpcuaAdapter
+namespace Odenwald.OpcUaPlugin
 {
     public class MeasurementDto
     {
@@ -33,25 +33,23 @@ namespace Odenwald.Input.OpcuaAdapter
         public int PollInterval { get; set; }
     }
 
-    public class OpcuaAdapter : IInputAdapter, IDisposable
+    public class OpcUaPlugin : IMetricsReadPlugin
     {
         #region attributes
-        static ILog l_logger = LogManager.GetLogger(typeof(OpcuaAdapter));
+        static ILog l_logger = LogManager.GetLogger(typeof(OpcUaPlugin));
         string l_opcuaUrl;
         ApplicationConfiguration l_applicationConfig;
-        OpcuaAdapterConfig l_opcuaAdapterConfig;
+        OpcUaPluginConfig l_opcuaAdapterConfig;
         Session l_session;
         Subscription l_subscription;
-        BlockingCollection<OpcuaMetric> l_metricCollection;
+        BlockingCollection<OpcUaMetric> l_metricCollection;
         List<PolledMeasurement> PolledMeasurements;
         List<MonitoredMeasurement> MonitoredMeasurements;
         #endregion
-        public IInputProcessor Processor { get; set; }
-
 
         public void Configure()
         {
-            l_opcuaAdapterConfig = ConfigurationManager.GetSection("Opcua") as OpcuaAdapterConfig;
+            l_opcuaAdapterConfig = ConfigurationManager.GetSection("OpcUa") as OpcUaPluginConfig;
             if (l_opcuaAdapterConfig == null)
             {
                 throw new Exception("Cannot get configuration section : Opcua");
@@ -96,7 +94,7 @@ namespace Odenwald.Input.OpcuaAdapter
 
         public void Flush()
         {
-            throw new NotImplementedException();
+            l_logger.Debug("Flush");
         }
 
         public void Start()
@@ -105,7 +103,7 @@ namespace Odenwald.Input.OpcuaAdapter
             l_session = Session.Create(l_applicationConfig, new ConfiguredEndpoint(null, new EndpointDescription(l_opcuaUrl)), true, "Odenwald", 60000, null, null);//EndpointDescription need to be changed according to your OPC server
             l_subscription = new Subscription(l_session.DefaultSubscription) { PublishingInterval = 1000 };
 
-            l_metricCollection = new BlockingCollection<OpcuaMetric>();
+            l_metricCollection = new BlockingCollection<OpcUaMetric>();
             StartMonitoring();
             StartPolling();
         }
@@ -122,17 +120,17 @@ namespace Odenwald.Input.OpcuaAdapter
         }
 
 
-        public IList<IInputMetric> Read()
+        public IList<MetricValue> Read()
         {
             if (l_metricCollection.Count <= 0)
                 return null;
-            List<OpcuaMetric> metricList = new List<OpcuaMetric>();
+            List<MetricValue> metricList = new List<MetricValue>();
 
 
             while (l_metricCollection.Count > 0)
             {
 
-                OpcuaMetric data = null;
+                OpcUaMetric data = null;
                 try
                 {
                     data = l_metricCollection.Take();
@@ -141,13 +139,24 @@ namespace Odenwald.Input.OpcuaAdapter
 
                 if (data != null)
                 {
-                    metricList.Add(data);
+                    MetricValue metricValue = new MetricValue()
+                    {
+                        TypeName = "gauge",
+                        TypeInstanceName = "gauge",
+                        //Interval = data.Measurement.mo
+                        HostName = "localhost",
+                        PluginInstanceName = "OpcUaPluginInstance",
+                        PluginName = "OpcUaPlugin",
+                        Extension = data.JsonString()
+                    };
+                    metricList.Add(metricValue);
                 }
             }
             l_logger.DebugFormat("Read {0} items.", metricList.Count);
-            return new List<IInputMetric>(metricList.Cast<IInputMetric>());
+            return metricList;
 
         }
+        
 
         #region methods
         void InitializeMeasurements()
@@ -189,7 +198,8 @@ namespace Odenwald.Input.OpcuaAdapter
 
                         break;
                     default:
-                        //no collection type, log
+                        //no collection type, log 
+                        l_logger.DebugFormat("no collection type at: {0}", item.Name);
                         break;
                 }
             }
@@ -221,19 +231,18 @@ namespace Odenwald.Input.OpcuaAdapter
         }
         void MonitorData(MonitoredMeasurement measurement, DataValue NewValue)
         {
-            OpcuaMetric metric = new OpcuaMetric();
-            metric.HostName = "localhost";
-            metric.AdapterInstanceName = "OpcuaAdapterInstance";
-            metric.AdapterName = "OpcuaAdapter";
+            OpcUaMetric metric = new OpcUaMetric();
+            //metric.HostName = "localhost";
+            //metric.AdapterInstanceName = "OpcuaAdapterInstance";
+            //metric.AdapterName = "OpcuaAdapter";
 
             metric.Timestamp = NewValue.SourceTimestamp;
             metric.OpcValue = NewValue.WrappedValue.Value;
-            metric.TypeName = "gauge";
-            metric.TypeInstanceName = "gauge";
-            metric.Interval = measurement.MonitorResolution;
+            //metric.TypeName = "gauge";
+            //metric.TypeInstanceName = "gauge";
+            //metric.Interval = measurement.MonitorResolution;
 
             metric.Measurement = (MeasurementDto)measurement;
-            metric.Epoch = Util.GetNow();
 
             l_metricCollection.Add(metric);
         }
@@ -254,18 +263,18 @@ namespace Odenwald.Input.OpcuaAdapter
         }
         void ReadMeasurement(PolledMeasurement measurement)
         {
-            OpcuaMetric metric = new OpcuaMetric();
-            metric.HostName = "localhost";
-            metric.AdapterInstanceName = "OpcuaAdapterInstance";
-            metric.AdapterName = "OpcuaAdapter";
+            OpcUaMetric metric = new OpcUaMetric();
+            //metric.HostName = "localhost";
+            //metric.AdapterInstanceName = "OpcuaAdapterInstance";
+            //metric.AdapterName = "OpcuaAdapter";
 
 
-            metric.TypeName = "gauge";
-            metric.TypeInstanceName = "gauge";
-            metric.Interval = measurement.PollInterval;
+            //metric.TypeName = "gauge";
+            //metric.TypeInstanceName = "gauge";
+            //metric.Interval = measurement.PollInterval;
 
             metric.Measurement = (MeasurementDto)measurement;
-            metric.Epoch = Util.GetNow();
+            //metric.Epoch = Util.GetNow();
 
 
 
@@ -301,6 +310,8 @@ namespace Odenwald.Input.OpcuaAdapter
             }
             GC.SuppressFinalize(this);
         }
+
+      
 
 
         #endregion

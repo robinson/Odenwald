@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Odenwald.Input.WindowsPerformanceCounterAdapter")]
+[assembly: AssemblyTitle("Odenwald.OpcUaPlugin")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Odenwald.Input.WindowsPerformanceCounterAdapter")]
+[assembly: AssemblyProduct("Odenwald.OpcUaPlugin")]
 [assembly: AssemblyCopyright("Copyright ©  2016")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("7df024a1-50a5-4007-8b58-9cb04fbe8aad")]
+[assembly: Guid("63e03daa-660e-4c89-ba28-e1f6b72f854a")]
 
 // Version information for an assembly consists of the following four values:
 //

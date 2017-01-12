@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Odenwald.Input.WindowsPerformanceCounterAdapter
+namespace Odenwald.WindowsPerformanceCounterPlugin
 {
-    public class WindowsPerformanceCounterPluginConfig: ConfigurationSection
+    public class WindowsPerformanceCounterPluginConfig : ConfigurationSection
     {
         [ConfigurationProperty("RefreshInstancesConfiguration", IsRequired = true)]
         public RefreshInstancesConfigurationConfig RefreshInstancesConfiguration

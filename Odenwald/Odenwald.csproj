@@ -49,22 +49,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AdapterRegistry.cs" />
+    <Compile Include="PluginRegistry.cs" />
     <Compile Include="Config\OdenwaldConfig.cs" />
-    <Compile Include="DefaultInputAdapter.cs" />
-    <Compile Include="DefaultMetric.cs" />
-    <Compile Include="DefaultOutputAdapter.cs" />
-    <Compile Include="DefaultProcessor.cs" />
-    <Compile Include="Interface\IAdapter.cs" />
-    <Compile Include="Interface\IInputMetric.cs" />
-    <Compile Include="Interface\IInputProcessor.cs" />
-    <Compile Include="Interface\IMetric.cs" />
-    <Compile Include="Interface\IInputAdapter.cs" />
-    <Compile Include="Interface\IOutputAdapter.cs" />
-    <Compile Include="DataAcquisition.cs" />
-    <Compile Include="Interface\IOutputMetric.cs" />
-    <Compile Include="Interface\IOutputProcessor.cs" />
-    <Compile Include="Interface\IProcessor.cs" />
+    <Compile Include="MetricValue.cs" />
+    <Compile Include="Aggregator.cs" />
+    <Compile Include="Interface\IMetricsPlugin.cs" />
+    <Compile Include="Interface\IMetricsReadPlugin.cs" />
+    <Compile Include="Interface\IMetricsWritePlugin.cs" />
+    <Compile Include="MetricsCollector.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Type\Types.cs" />
     <Compile Include="Util.cs" />

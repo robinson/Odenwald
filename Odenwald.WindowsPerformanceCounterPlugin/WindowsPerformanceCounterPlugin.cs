@@ -10,7 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
 
-namespace Odenwald.Input.WindowsPerformanceCounterAdapter
+namespace Odenwald.WindowsPerformanceCounterPlugin
 {
     internal class Helper
     {
@@ -50,12 +50,14 @@ namespace Odenwald.Input.WindowsPerformanceCounterAdapter
             return new CountProcessesAndThreadsGenerator();
         }
     }
+
     internal interface IMetricGenerator
     {
         bool Configure(Dictionary<string, object> config);
         bool Refresh();
-        List<DefaultMetric> NextValues();
+        List<MetricValue> NextValues();
     }
+
     internal abstract class PerformanceCounterGenerator : IMetricGenerator
     {
         static protected string s_hostName = Util.GetHostName();
@@ -91,28 +93,89 @@ namespace Odenwald.Input.WindowsPerformanceCounterAdapter
             return true;
         }
 
-        public abstract List<DefaultMetric> NextValues();
+        public abstract List<MetricValue> NextValues();
 
-        public DefaultMetric GetMetricValue(List<double> vals)
+        public MetricValue GetMetricValue(List<double> vals)
         {
-            var metricValue = new DefaultMetric
+            var metricValue = new MetricValue
             {
                 HostName = s_hostName,
-                AdapterName = CollectdPlugin,
-                AdapterInstanceName = CollectdPluginInstance,
+                PluginName = CollectdPlugin,
+                PluginInstanceName = CollectdPluginInstance,
                 TypeName = CollectdType,
                 TypeInstanceName = CollectdTypeInstance,
                 Values = vals.ToArray()
             };
-
-            TimeSpan t = DateTime.UtcNow - new DateTime(1970, 1, 1);
-            double epoch = t.TotalMilliseconds / 1000;
-            metricValue.Epoch = Math.Round(epoch, 3);
+          
             return metricValue;
         }
     }
 
-   
+    internal class PerformanceCounterCategoryInstancesGenerator : PerformanceCounterGenerator
+    {
+        protected PerformanceCounterCategory _performanceCounterCategory;
+
+        public override bool Configure(Dictionary<string, object> config)
+        {
+            if (!base.Configure(config))
+                return false;
+            try
+            {
+                _performanceCounterCategory = new PerformanceCounterCategory(CounterCategory);
+                return true;
+            }
+            catch (Exception exp)
+            {
+                l_logger.ErrorFormat("Got exception : {0}, while adding performance counter category: {1}", exp, CounterCategory);
+                return false;
+            }
+        }
+
+        public override List<MetricValue> NextValues()
+        {
+            var metricValueList = new List<MetricValue>();
+            var vals = new List<double>();
+            vals.Add(_performanceCounterCategory.GetInstanceNames().Length);
+            metricValueList.Add(GetMetricValue(vals));
+            return metricValueList;
+        }
+    }
+
+    internal class CountProcessesAndThreadsGenerator : PerformanceCounterCategoryInstancesGenerator
+    {
+        protected PerformanceCounter _threadNumberCounter;
+
+        public override bool Configure(Dictionary<string, object> config)
+        {
+            string category = "Process";
+            string name = "Thread Count";
+            string instance = "_Total";
+            config["Category"] = category;
+            if (!base.Configure(config))
+                return false;
+            try
+            {
+                _threadNumberCounter = new PerformanceCounter(category, name, instance);
+                return true;
+            }
+            catch (Exception exp)
+            {
+                l_logger.ErrorFormat("Got exception : {0}, while adding performance counter: {1},{2},{3}", exp, category, name, instance);
+                return false;
+            }
+        }
+
+        public override List<MetricValue> NextValues()
+        {
+            var metricValueList = new List<MetricValue>();
+            var vals = new List<double>();
+            vals.Add(_performanceCounterCategory.GetInstanceNames().Length);
+            vals.Add(_threadNumberCounter.NextValue());
+            metricValueList.Add(GetMetricValue(vals));
+            return metricValueList;
+        }
+    }
+
     internal class PerformanceCounterMetricGenerator : PerformanceCounterGenerator
     {
         internal class MetricRetriever
@@ -211,10 +274,10 @@ namespace Odenwald.Input.WindowsPerformanceCounterAdapter
         {
             return base.Configure(config) && Refresh();
         }
-       
-        public override List<DefaultMetric> NextValues()
+
+        public override List<MetricValue> NextValues()
         {
-            var metricValueList = new List<DefaultMetric>();
+            var metricValueList = new List<MetricValue>();
             var missingInstances = new List<MetricRetriever>();
             foreach (MetricRetriever metricRetriver in MetricRetrievers)
             {
@@ -228,7 +291,7 @@ namespace Odenwald.Input.WindowsPerformanceCounterAdapter
                 {
                     var metricValue = GetMetricValue(vals);
                     if (CollectdPluginInstance == null || CollectdPluginInstance == String.Empty)
-                        metricValue.AdapterInstanceName = metricRetriver.Instance;
+                        metricValue.PluginInstanceName = metricRetriver.Instance;
                     metricValueList.Add(metricValue);
                 }
             }
@@ -248,69 +311,7 @@ namespace Odenwald.Input.WindowsPerformanceCounterAdapter
             return metricValueList;
         }
     }
-    internal class CountProcessesAndThreadsGenerator : PerformanceCounterCategoryInstancesGenerator
-    {
-        protected PerformanceCounter _threadNumberCounter;
 
-        public override bool Configure(Dictionary<string, object> config)
-        {
-            string category = "Process";
-            string name = "Thread Count";
-            string instance = "_Total";
-            config["Category"] = category;
-            if (!base.Configure(config))
-                return false;
-            try
-            {
-                _threadNumberCounter = new PerformanceCounter(category, name, instance);
-                return true;
-            }
-            catch (Exception exp)
-            {
-                l_logger.ErrorFormat("Got exception : {0}, while adding performance counter: {1},{2},{3}", exp, category, name, instance);
-                return false;
-            }
-        }
-
-        public override List<DefaultMetric> NextValues()
-        {
-            var metricValueList = new List<DefaultMetric>();
-            var vals = new List<double>();
-            vals.Add(_performanceCounterCategory.GetInstanceNames().Length);
-            vals.Add(_threadNumberCounter.NextValue());
-            metricValueList.Add(GetMetricValue(vals));
-            return metricValueList;
-        }
-    }
-    internal class PerformanceCounterCategoryInstancesGenerator : PerformanceCounterGenerator
-    {
-        protected PerformanceCounterCategory _performanceCounterCategory;
-
-        public override bool Configure(Dictionary<string, object> config)
-        {
-            if (!base.Configure(config))
-                return false;
-            try
-            {
-                _performanceCounterCategory = new PerformanceCounterCategory(CounterCategory);
-                return true;
-            }
-            catch (Exception exp)
-            {
-                l_logger.ErrorFormat("Got exception : {0}, while adding performance counter category: {1}", exp, CounterCategory);
-                return false;
-            }
-        }
-
-        public override List<DefaultMetric> NextValues()
-        {
-            var metricValueList = new List<DefaultMetric>();
-            var vals = new List<double>();
-            vals.Add(_performanceCounterCategory.GetInstanceNames().Length);
-            metricValueList.Add(GetMetricValue(vals));
-            return metricValueList;
-        }
-    }
     internal class AveragesGenerator : PerformanceCounterMetricGenerator
     {
         public List<uint> AverageIntervalsInSeconds = new List<uint>();
@@ -370,7 +371,7 @@ namespace Odenwald.Input.WindowsPerformanceCounterAdapter
             string averageIntervals = Helper.DictionaryValue(config, "TransformerParameters");
             if (averageIntervals == null)
             {
-                l_logger.Error("AveragesGenerator: no interval is configured for averaging.");
+                l_logger.ErrorFormat("AveragesGenerator: no interval is configured for averaging.");
                 return false;
             }
             string[] averagesInString = averageIntervals.Split(',');
@@ -379,14 +380,14 @@ namespace Odenwald.Input.WindowsPerformanceCounterAdapter
                 uint val;
                 if (!UInt32.TryParse(interval, out val) || val == 0)
                 {
-                    l_logger.Error("AveragesGenerator: average interval should be a positive number.");
+                    l_logger.ErrorFormat("AveragesGenerator: average interval should be a positive number.");
                     return false;
                 }
                 AverageIntervalsInSeconds.Add(val);
             }
             if (AverageIntervalsInSeconds.Count == 0)
             {
-                l_logger.Error("AveragesGenerator: average intervals are not configured correctly.");
+                l_logger.ErrorFormat("AveragesGenerator: average intervals are not configured correctly.");
                 return false;
             }
             // TODO: support unsorted average values
@@ -400,19 +401,19 @@ namespace Odenwald.Input.WindowsPerformanceCounterAdapter
             // take the first sample
             if (!TakeSample())
             {
-                l_logger.Error("AveragesGenerator: Failed to take the first sample.");
+                l_logger.ErrorFormat("AveragesGenerator: Failed to take the first sample.");
                 return false;
             }
             // set up sampling timer
-            _timer.Elapsed += (sender, e) => OnTakeSample(sender, e, this); 
+            _timer.Elapsed += (sender, e) => OnTakeSample(sender, e, this); ;
             _timer.AutoReset = true;
             _timer.Enabled = true;
             return true;
         }
 
-        public override List<DefaultMetric> NextValues()
+        public override List<MetricValue> NextValues()
         {
-            var metricValueList = new List<DefaultMetric>();
+            var metricValueList = new List<MetricValue>();
             _mutex.WaitOne();
             // the average values are saved in a fatten list of [Average values of each MetricRetriever]
             int i = 0;
@@ -449,7 +450,7 @@ namespace Odenwald.Input.WindowsPerformanceCounterAdapter
 
                 var metricValue = GetMetricValue(averages);
                 if (CollectdPluginInstance == null || CollectdPluginInstance == String.Empty)
-                    metricValue.AdapterInstanceName = metricRetriver.Instance;
+                    metricValue.PluginInstanceName = metricRetriver.Instance;
 
                 metricValueList.Add(metricValue);
             }
@@ -457,26 +458,24 @@ namespace Odenwald.Input.WindowsPerformanceCounterAdapter
             return metricValueList;
         }
     }
-    public class WindowsPerformanceCounterAdapter : IInputAdapter
+
+    public class WindowsPerformanceCounterPlugin : IMetricsReadPlugin
     {
-        static ILog l_logger = LogManager.GetLogger(typeof(WindowsPerformanceCounterAdapter));
+        internal static ILog l_logger = LogManager.GetLogger(typeof(WindowsPerformanceCounterPlugin));
         private readonly IList<IMetricGenerator> _metricGenerators;
         private bool _refreshConfiguration;
         private DateTime _instanceRefreshTime;
         private int _refreshConfigurationInterval;
 
-        public IInputProcessor Processor
-        {
-            get; set;
-        }
-        public WindowsPerformanceCounterAdapter()
+        public WindowsPerformanceCounterPlugin()
         {
             _metricGenerators = new List<IMetricGenerator>();
         }
+
         public void Configure()
         {
             var config =
-               ConfigurationManager.GetSection("WindowsPerformanceCounter") as WindowsPerformanceCounterPluginConfig;
+                ConfigurationManager.GetSection("WindowsPerformanceCounter") as WindowsPerformanceCounterPluginConfig;
             if (config == null)
             {
                 throw new Exception("Cannot get configuration section : WindowsPerformanceCounter");
@@ -523,7 +522,17 @@ namespace Odenwald.Input.WindowsPerformanceCounterAdapter
             l_logger.Info("WindowsPerformanceCounter plugin configured");
         }
 
-        public IList<IInputMetric> Read()
+        public void Start()
+        {
+            l_logger.Info("WindowsPerformanceCounter plugin started");
+        }
+
+        public void Stop()
+        {
+            l_logger.Info("WindowsPerformanceCounter plugin stopped");
+        }
+
+        public IList<MetricValue> Read()
         {
             if (DateTime.Now > _instanceRefreshTime.AddSeconds(_refreshConfigurationInterval))
             {
@@ -533,22 +542,12 @@ namespace Odenwald.Input.WindowsPerformanceCounterAdapter
                     metricGenerator.Refresh();
                 }
             }
-            var metricValueList = new List<IInputMetric>();
+            var metricValueList = new List<MetricValue>();
             foreach (IMetricGenerator metricGenerator in _metricGenerators)
             {
                 metricValueList.AddRange(metricGenerator.NextValues());
             }
             return metricValueList;
-        }
-
-        public void Start()
-        {
-            l_logger.Info("WindowsPerformanceCounter plugin started");
-        }
-
-        public void Stop()
-        {
-            l_logger.Info("WindowsPerformanceCounter plugin stopped");
         }
     }
 }

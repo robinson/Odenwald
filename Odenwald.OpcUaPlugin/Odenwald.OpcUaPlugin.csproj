@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{7DF024A1-50A5-4007-8B58-9CB04FBE8AAD}</ProjectGuid>
+    <ProjectGuid>{712B2914-BF62-4278-BFE2-EB6925760839}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Odenwald.Input.WindowsPerformanceCounterAdapter</RootNamespace>
-    <AssemblyName>Odenwald.Input.WindowsPerformanceCounterAdapter</AssemblyName>
+    <RootNamespace>Odenwald.OpcUaPlugin</RootNamespace>
+    <AssemblyName>Odenwald.OpcUaPlugin</AssemblyName>
     <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -34,7 +34,19 @@
       <HintPath>..\..\packages\log4net.2.0.5\lib\net45-full\log4net.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.VisualBasic" />
+    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Opc.Ua.Client">
+      <HintPath>libs\Opc.Ua.Client.dll</HintPath>
+    </Reference>
+    <Reference Include="Opc.Ua.Configuration">
+      <HintPath>libs\Opc.Ua.Configuration.dll</HintPath>
+    </Reference>
+    <Reference Include="Opc.Ua.Core">
+      <HintPath>libs\Opc.Ua.Core.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
@@ -46,19 +58,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Config\WindowsPerformanceCounterPluginConfig.cs" />
-    <Compile Include="WindowsPerformanceCounterAdapter.cs" />
+    <Compile Include="OpcUaPlugin.cs" />
+    <Compile Include="OpcUaPluginConfig.cs" />
+    <Compile Include="OpcUaMetric.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Config\WindowsPerformanceCounter.config">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    <None Include="OpcUa.config">
       <SubType>Designer</SubType>
     </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Odenwald\Odenwald.csproj">
+    <ProjectReference Include="..\Odenwald\Odenwald.csproj">
       <Project>{bb7a7712-cc11-4d95-83dc-a0ab28714860}</Project>
       <Name>Odenwald</Name>
     </ProjectReference>

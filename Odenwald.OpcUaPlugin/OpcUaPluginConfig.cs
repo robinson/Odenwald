@@ -5,13 +5,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Odenwald.Input.OpcuaAdapter
+namespace Odenwald.OpcUaPlugin
 {
-    public sealed class OpcuaAdapterConfig : ConfigurationSection
+    public sealed class OpcUaPluginConfig : ConfigurationSection
     {
-        public static OpcuaAdapterConfig GetConfig()
+        public static OpcUaPluginConfig GetConfig()
         {
-            return (OpcuaAdapterConfig)ConfigurationManager.GetSection("Opcua") ?? new OpcuaAdapterConfig();
+            return (OpcUaPluginConfig)ConfigurationManager.GetSection("Opcua") ?? new OpcUaPluginConfig();
         }
         [ConfigurationProperty("Settings", IsRequired = true)]
         public SettingsConfig Settings

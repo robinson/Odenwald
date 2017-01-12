@@ -14,7 +14,7 @@ namespace Odenwald.Runner
     partial class OdenwaldService : ServiceBase
     {
         static ILog l_logger = LogManager.GetLogger(typeof(OdenwaldService));
-        private DataAcquisition l_dataAcquisition;
+        private MetricsCollector l_metricCollector;
         public OdenwaldService()
         {
             InitializeComponent();
@@ -32,9 +32,9 @@ namespace Odenwald.Runner
         public virtual void StartService(params string[] args)
         {
             l_logger.Debug("StartService() begin");
-            l_dataAcquisition = new DataAcquisition();
-            l_dataAcquisition.ConfigureAll();
-            l_dataAcquisition.StartAll();
+            l_metricCollector = new MetricsCollector();
+            l_metricCollector.ConfigureAll();
+            l_metricCollector.StartAll();
             l_logger.Debug("StartService() return");
         }
 
@@ -42,7 +42,7 @@ namespace Odenwald.Runner
         public virtual void StopService()
         {
             l_logger.Debug("StopService() begin");
-            l_dataAcquisition.StopAll();
+            l_metricCollector.StopAll();
             l_logger.Debug("StopService() return");
         }
     }

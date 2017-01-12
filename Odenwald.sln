@@ -5,23 +5,19 @@ VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Odenwald", "Odenwald\Odenwald.csproj", "{BB7A7712-CC11-4D95-83DC-A0AB28714860}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Input", "Input", "{938742A0-A235-4018-B727-6CF05C08E3EA}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Output", "Output", "{E841BE59-66EE-4A13-B0F6-5E867FDE6FA9}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Odenwald.Input.WindowsPerformanceCounterAdapter", "Input\Odenwald.Input.WindowsPerformanceCounterAdapter\Odenwald.Input.WindowsPerformanceCounterAdapter.csproj", "{7DF024A1-50A5-4007-8B58-9CB04FBE8AAD}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Odenwald.Output.ConsoleRunnerAdapter", "Output\Odenwald.Output.ConsoleRunnerAdapter\Odenwald.Output.ConsoleRunnerAdapter.csproj", "{E7092227-FB5B-40E9-882C-9F636335AFB7}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Odenwald.Service", "Odenwald.Service\Odenwald.Service.csproj", "{AD130047-5631-4F12-B357-82B45E671C83}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Odenwald.Input.OpcuaAdapter", "Input\Odenwald.Input.OpcuaAdapter\Odenwald.Input.OpcuaAdapter.csproj", "{63E03DAA-660E-4C89-BA28-E1F6B72F854A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{BC6D364C-E228-46F3-B0DC-36E10395334B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Odenwald.Input.OpcuaAdapter.Tests", "Tests\Odenwald.Input.OpcuaAdapter.Tests\Odenwald.Input.OpcuaAdapter.Tests.csproj", "{A94307BD-361C-4616-829D-A197EF9D94E8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Odenwald.Output.InfluxDbAdapter", "Output\Odenwald.Output.InfluxDbAdapter\Odenwald.Output.InfluxDbAdapter.csproj", "{084BE120-923F-4517-850C-17D1D5590AC9}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Plugins", "Plugins", "{5256FABB-EEFB-4508-A51C-EAC828656DE7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Odenwald.ConsolePlugin", "Odenwald.ConsolePlugin\Odenwald.ConsolePlugin.csproj", "{BA07862A-586A-47AC-9069-7D1904973A83}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Odenwald.WindowsPerformanceCounterPlugin", "Odenwald.WindowsPerformanceCounterPlugin\Odenwald.WindowsPerformanceCounterPlugin.csproj", "{623527DA-7F19-4326-98D8-EA833857367C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Odenwald.OpcUaPlugin", "Odenwald.OpcUaPlugin\Odenwald.OpcUaPlugin.csproj", "{712B2914-BF62-4278-BFE2-EB6925760839}"
 EndProject
 Global
 	GlobalSection(Performance) = preSolution
@@ -36,39 +32,34 @@ Global
 		{BB7A7712-CC11-4D95-83DC-A0AB28714860}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BB7A7712-CC11-4D95-83DC-A0AB28714860}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BB7A7712-CC11-4D95-83DC-A0AB28714860}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7DF024A1-50A5-4007-8B58-9CB04FBE8AAD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7DF024A1-50A5-4007-8B58-9CB04FBE8AAD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7DF024A1-50A5-4007-8B58-9CB04FBE8AAD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7DF024A1-50A5-4007-8B58-9CB04FBE8AAD}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E7092227-FB5B-40E9-882C-9F636335AFB7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E7092227-FB5B-40E9-882C-9F636335AFB7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E7092227-FB5B-40E9-882C-9F636335AFB7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E7092227-FB5B-40E9-882C-9F636335AFB7}.Release|Any CPU.Build.0 = Release|Any CPU
 		{AD130047-5631-4F12-B357-82B45E671C83}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{AD130047-5631-4F12-B357-82B45E671C83}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AD130047-5631-4F12-B357-82B45E671C83}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AD130047-5631-4F12-B357-82B45E671C83}.Release|Any CPU.Build.0 = Release|Any CPU
-		{63E03DAA-660E-4C89-BA28-E1F6B72F854A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{63E03DAA-660E-4C89-BA28-E1F6B72F854A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{63E03DAA-660E-4C89-BA28-E1F6B72F854A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{63E03DAA-660E-4C89-BA28-E1F6B72F854A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A94307BD-361C-4616-829D-A197EF9D94E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{A94307BD-361C-4616-829D-A197EF9D94E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A94307BD-361C-4616-829D-A197EF9D94E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A94307BD-361C-4616-829D-A197EF9D94E8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{084BE120-923F-4517-850C-17D1D5590AC9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{084BE120-923F-4517-850C-17D1D5590AC9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{084BE120-923F-4517-850C-17D1D5590AC9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{084BE120-923F-4517-850C-17D1D5590AC9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BA07862A-586A-47AC-9069-7D1904973A83}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BA07862A-586A-47AC-9069-7D1904973A83}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BA07862A-586A-47AC-9069-7D1904973A83}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BA07862A-586A-47AC-9069-7D1904973A83}.Release|Any CPU.Build.0 = Release|Any CPU
+		{623527DA-7F19-4326-98D8-EA833857367C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{623527DA-7F19-4326-98D8-EA833857367C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{623527DA-7F19-4326-98D8-EA833857367C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{623527DA-7F19-4326-98D8-EA833857367C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{712B2914-BF62-4278-BFE2-EB6925760839}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{712B2914-BF62-4278-BFE2-EB6925760839}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{712B2914-BF62-4278-BFE2-EB6925760839}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{712B2914-BF62-4278-BFE2-EB6925760839}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{7DF024A1-50A5-4007-8B58-9CB04FBE8AAD} = {938742A0-A235-4018-B727-6CF05C08E3EA}
-		{E7092227-FB5B-40E9-882C-9F636335AFB7} = {E841BE59-66EE-4A13-B0F6-5E867FDE6FA9}
-		{63E03DAA-660E-4C89-BA28-E1F6B72F854A} = {938742A0-A235-4018-B727-6CF05C08E3EA}
 		{A94307BD-361C-4616-829D-A197EF9D94E8} = {BC6D364C-E228-46F3-B0DC-36E10395334B}
-		{084BE120-923F-4517-850C-17D1D5590AC9} = {E841BE59-66EE-4A13-B0F6-5E867FDE6FA9}
+		{BA07862A-586A-47AC-9069-7D1904973A83} = {5256FABB-EEFB-4508-A51C-EAC828656DE7}
+		{623527DA-7F19-4326-98D8-EA833857367C} = {5256FABB-EEFB-4508-A51C-EAC828656DE7}
+		{712B2914-BF62-4278-BFE2-EB6925760839} = {5256FABB-EEFB-4508-A51C-EAC828656DE7}
 	EndGlobalSection
 EndGlobal

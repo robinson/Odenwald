@@ -8,17 +8,16 @@ using System.Threading.Tasks;
 
 namespace Odenwald
 {
-    public sealed class DefaultMetric : IInputMetric, IOutputMetric
+    public class MetricValue
     {
         #region Attribute
-        static ILog l_logger = LogManager.GetLogger(typeof(DefaultMetric));
+        static ILog l_logger = LogManager.GetLogger(typeof(MetricValue));
         private readonly IDictionary<string, string> l_meta = new SortedDictionary<string, string>();
         #endregion
 
         #region IInputMetric Properties
-        public string AdapterInstanceName { get; set; }
-
-        public string AdapterName { get; set; }
+        public string PluginName { get; set; }
+        public string PluginInstanceName { get; set; }
 
         public string HostName { get; set; }
 
@@ -29,7 +28,7 @@ namespace Odenwald
 
         public double[] Values { get; set; }
 
-        public double Epoch { get; set; }
+        public double Epoch { get { return DateTimeOffset.Now.ToUnixTimeSeconds(); } }
 
         public int Interval { get; set; }
 
@@ -41,7 +40,7 @@ namespace Odenwald
         {
             get
             {
-                return (HostName + "." + AdapterName + "." + AdapterName + "." + TypeName + "." + TypeInstanceName);
+                return (HostName + "." + PluginName + "." + PluginName + "." + TypeName + "." + TypeInstanceName);
             }
         }
 
@@ -62,20 +61,21 @@ namespace Odenwald
         {
             l_meta[tagName] = tagValue;
         }
+        public string Extension { get; set; } //extension will be a json string
         #endregion
 
         #region Properties
-        //public DefaultMetric DeepCopy()
-        //{
-        //    var other = (DefaultMetric)MemberwiseClone();
-        //    other.HostName = String.Copy(HostName);
-        //    other.AdapterName = String.Copy(AdapterName);
-        //    other.AdapterInstanceName = String.Copy(AdapterInstanceName);
-        //    other.TypeName = String.Copy(TypeName);
-        //    other.TypeInstanceName = String.Copy(TypeInstanceName);
-        //    other.Values = (double[])Values.Clone();
-        //    return (other);
-        //}
+        public MetricValue DeepCopy()
+        {
+            var other = (MetricValue)MemberwiseClone();
+            other.HostName = String.Copy(HostName);
+            other.PluginName = String.Copy(PluginName);
+            other.PluginInstanceName = String.Copy(PluginInstanceName);
+            other.TypeName = String.Copy(TypeName);
+            other.TypeInstanceName = String.Copy(TypeInstanceName);
+            other.Values = (double[])Values.Clone();
+            return (other);
+        }
 
         public string GetJsonString()
         {
@@ -104,19 +104,7 @@ namespace Odenwald
                 l_logger.ErrorFormat("Got exception in json conversion : {0}", ex);
             }
             return (jsonString);
-        }
-
-        IMetric IMetric.DeepCopy()
-        {
-            var other = (DefaultMetric)MemberwiseClone();
-            other.HostName = String.Copy(HostName);
-            other.AdapterName = String.Copy(AdapterName);
-            other.AdapterInstanceName = String.Copy(AdapterInstanceName);
-            other.TypeName = String.Copy(TypeName);
-            other.TypeInstanceName = String.Copy(TypeInstanceName);
-            other.Values = (double[])Values.Clone();
-            return (other);
-        }
+        }       
         #endregion
 
 

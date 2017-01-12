@@ -6,10 +6,8 @@ using System.Threading.Tasks;
 
 namespace Odenwald
 {
-    public interface IAdapter
+    public interface IMetricsReadPlugin : IMetricsPlugin
     {
-        void Configure();
-        void Start();
-        void Stop();
+        IList<MetricValue> Read();
     }
 }

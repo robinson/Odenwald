@@ -3,10 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using InfluxDB.Net.Models;
-using InfluxDB.Net.Infrastructure.Influx;
 using log4net;
 
 namespace Odenwald.Output.InfluxDbAdapter
@@ -36,7 +33,7 @@ namespace Odenwald.Output.InfluxDbAdapter
 
         public void Flush()
         {
-            l_logger.Info("InfluxDbAdapter stopped!");
+            l_logger.Info("InfluxDbAdapter flushed!");
         }
 
         public void Start()
@@ -61,12 +58,7 @@ namespace Odenwald.Output.InfluxDbAdapter
                     {"Value", metric.Values},
                     {"Timestamp", DateTime.Now}
                 },
-                Tags = new Dictionary<string, object>()
-                {
-
-                }
-                
-
+                Tags = metric.MetaData.ToDictionary(k => k.Key, k => k.Value == "" || k.Value == null ? null :  (object)k.Value)
             };
             var writeResponse =  l_influxDbClient.WriteAsync(l_influxDbConfig.Settings.Database, p);
 
