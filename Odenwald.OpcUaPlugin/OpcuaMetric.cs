@@ -38,4 +38,6 @@ namespace Odenwald.OpcUaPlugin
             return (JsonConvert.SerializeObject(opcUaObject));
         }
     }
+
+    
 }

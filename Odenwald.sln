@@ -9,8 +9,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Odenwald.Service", "Odenwal
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{BC6D364C-E228-46F3-B0DC-36E10395334B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Odenwald.Input.OpcuaAdapter.Tests", "Tests\Odenwald.Input.OpcuaAdapter.Tests\Odenwald.Input.OpcuaAdapter.Tests.csproj", "{A94307BD-361C-4616-829D-A197EF9D94E8}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Plugins", "Plugins", "{5256FABB-EEFB-4508-A51C-EAC828656DE7}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Odenwald.ConsolePlugin", "Odenwald.ConsolePlugin\Odenwald.ConsolePlugin.csproj", "{BA07862A-586A-47AC-9069-7D1904973A83}"
@@ -19,10 +17,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Odenwald.WindowsPerformance
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Odenwald.OpcUaPlugin", "Odenwald.OpcUaPlugin\Odenwald.OpcUaPlugin.csproj", "{712B2914-BF62-4278-BFE2-EB6925760839}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Odenwald.OpcUaPluginTest", "Tests\Odenwald.OpcUaPluginTest\Odenwald.OpcUaPluginTest.csproj", "{C46F6932-AB4C-4A49-A3BA-1F9690015A48}"
+EndProject
 Global
-	GlobalSection(Performance) = preSolution
-		HasPerformanceSessions = true
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
@@ -36,10 +33,6 @@ Global
 		{AD130047-5631-4F12-B357-82B45E671C83}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AD130047-5631-4F12-B357-82B45E671C83}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AD130047-5631-4F12-B357-82B45E671C83}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A94307BD-361C-4616-829D-A197EF9D94E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A94307BD-361C-4616-829D-A197EF9D94E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A94307BD-361C-4616-829D-A197EF9D94E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A94307BD-361C-4616-829D-A197EF9D94E8}.Release|Any CPU.Build.0 = Release|Any CPU
 		{BA07862A-586A-47AC-9069-7D1904973A83}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{BA07862A-586A-47AC-9069-7D1904973A83}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BA07862A-586A-47AC-9069-7D1904973A83}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -52,14 +45,18 @@ Global
 		{712B2914-BF62-4278-BFE2-EB6925760839}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{712B2914-BF62-4278-BFE2-EB6925760839}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{712B2914-BF62-4278-BFE2-EB6925760839}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C46F6932-AB4C-4A49-A3BA-1F9690015A48}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C46F6932-AB4C-4A49-A3BA-1F9690015A48}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C46F6932-AB4C-4A49-A3BA-1F9690015A48}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C46F6932-AB4C-4A49-A3BA-1F9690015A48}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{A94307BD-361C-4616-829D-A197EF9D94E8} = {BC6D364C-E228-46F3-B0DC-36E10395334B}
 		{BA07862A-586A-47AC-9069-7D1904973A83} = {5256FABB-EEFB-4508-A51C-EAC828656DE7}
 		{623527DA-7F19-4326-98D8-EA833857367C} = {5256FABB-EEFB-4508-A51C-EAC828656DE7}
 		{712B2914-BF62-4278-BFE2-EB6925760839} = {5256FABB-EEFB-4508-A51C-EAC828656DE7}
+		{C46F6932-AB4C-4A49-A3BA-1F9690015A48} = {BC6D364C-E228-46F3-B0DC-36E10395334B}
 	EndGlobalSection
 EndGlobal

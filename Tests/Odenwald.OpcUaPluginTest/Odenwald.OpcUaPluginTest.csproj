@@ -5,11 +5,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{A94307BD-361C-4616-829D-A197EF9D94E8}</ProjectGuid>
+    <ProjectGuid>{C46F6932-AB4C-4A49-A3BA-1F9690015A48}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Odenwald.Input.OpcuaAdapter.Tests</RootNamespace>
-    <AssemblyName>Odenwald.Input.OpcuaAdapter.Tests</AssemblyName>
+    <RootNamespace>Odenwald.OpcUaPluginTest</RootNamespace>
+    <AssemblyName>Odenwald.OpcUaPluginTest</AssemblyName>
     <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <NuGetPackageImportStamp>
@@ -33,6 +33,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Opc.Ua.Client">
+      <HintPath>..\..\Odenwald.OpcUaPlugin\libs\Opc.Ua.Client.dll</HintPath>
+    </Reference>
+    <Reference Include="Opc.Ua.Core">
+      <HintPath>..\..\Odenwald.OpcUaPlugin\libs\Opc.Ua.Core.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -59,11 +65,20 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="OpcUaAdapterTest.cs" />
+    <Compile Include="OpcUaClientTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Odenwald.OpcUaPlugin\Odenwald.OpcUaPlugin.csproj">
+      <Project>{712b2914-bf62-4278-bfe2-eb6925760839}</Project>
+      <Name>Odenwald.OpcUaPlugin</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

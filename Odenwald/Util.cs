@@ -44,6 +44,14 @@ namespace Odenwald
                     || value is double
                     || value is decimal;
         }
+        public static bool IsBoolean(this object value)
+        {
+            return value is bool;
+        }
+        public static bool IsString(this object value)
+        {
+            return value is string;
+        }
       
     }
 }

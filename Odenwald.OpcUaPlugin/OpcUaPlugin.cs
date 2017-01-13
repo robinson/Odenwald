@@ -1,4 +1,5 @@
 ﻿using log4net;
+using Odenwald;
 using Opc.Ua;
 using Opc.Ua.Client;
 using System;
@@ -20,7 +21,7 @@ namespace Odenwald.OpcUaPlugin
         public string AttributeId { get; set; }
         public string Path { get; set; }
         public int DeadbandAbsolute { get; set; }
-        public float DeadbandRelative { get; set; }
+        public decimal DeadbandRelative { get; set; }
         public object LastValue { get; set; }
         public string LastOpcstatus { get; set; }
     }
@@ -47,6 +48,7 @@ namespace Odenwald.OpcUaPlugin
         List<MonitoredMeasurement> MonitoredMeasurements;
         #endregion
 
+        #region imetricsreadplugin methods
         public void Configure()
         {
             l_opcuaAdapterConfig = ConfigurationManager.GetSection("OpcUa") as OpcUaPluginConfig;
@@ -156,7 +158,113 @@ namespace Odenwald.OpcUaPlugin
             return metricList;
 
         }
-        
+        #endregion
+
+        #region helper
+        bool QualifyMetric(ref OpcUaMetric metric)
+        {
+            if (!PointIsValid(metric) || PointMatchesType(metric))
+            {
+                // Set de default value for the type specified
+                l_logger.ErrorFormat("Invalid point: measurement.name<{0}>, measurement.nodeId.value<{1}>, metric.value<{2}>", metric.Measurement.Name, metric.Measurement.NodeId, metric.OpcValue.ToString());
+                switch (metric.Measurement.DataType)
+                {
+                    case "number":
+                        metric.OpcValue = 0;
+                        break;
+                    case "boolean":
+                        metric.OpcValue = false;
+                        break;
+                    case "string":
+                        metric.OpcValue = "";
+                        break;
+                    default:
+                        l_logger.Error("No valid datatype, ignoring point");
+                        break;
+                }
+                return false;
+            }
+            // Check for deadband
+            if (PointIsWithinDeadband(metric)) return false;
+            if (!PointMatchesType(metric))
+            {
+                l_logger.ErrorFormat("Invalid type returned from OPC. Ignoring point {0}", metric.Measurement.Name);
+                return false;
+            }
+            return true;
+        }
+        bool PointMatchesType(OpcUaMetric metric)
+        {
+            var match = (metric.OpcValue.IsNumber() && metric.Measurement.DataType == "number")
+                || metric.OpcValue.IsBoolean() && metric.Measurement.DataType == "boolean"
+                || metric.OpcValue.IsString() && metric.Measurement.DataType == "string";
+
+            if (!match)
+            {
+                //log here
+
+            }
+            return match;
+        }
+        bool PointIsValid(OpcUaMetric p)
+        {
+            // check if the value is a type that we can handle (number or a bool).
+            return (p.OpcValue != null && (p.OpcValue.IsBoolean() || p.OpcValue.IsNumber())) || p.OpcValue.IsString();
+
+        }
+        bool PointHasGoodOrDifferentBadStatus(OpcUaMetric p)
+        {
+            var curr = p.Opcstatus;
+            var prev = p.Measurement.LastOpcstatus;
+
+            if (curr == "Good" || curr != prev) return true;
+            return false;
+        }
+
+
+        bool PointIsWithinDeadband(OpcUaMetric metric)
+        {
+            // some vars for shorter statements later on.
+            var curr = metric.OpcValue;
+            var prev = metric.Measurement.LastValue;
+            var dba = metric.Measurement.DeadbandAbsolute;
+            var dbr = metric.Measurement.DeadbandRelative;
+
+            // return early if the type of the previous value is not the same as the current.
+            // this will also return when this is the first value and prev is still undefined.
+            if (curr.GetType() != prev.GetType()) return false;
+
+            // calculate deadbands based on value type. For numbers, make the
+            // calculations for both absolute and relative if they are set. For bool,
+            // just check if a deadband has been set and if the value has changed.
+
+            if (curr.IsNumber())
+            {
+
+                if (dba > 0 && Math.Abs(Convert.ToDecimal(curr) - Convert.ToDecimal(prev)) < dba)
+                {
+                    return true;
+                }
+                if (dbr > 0 && Math.Abs(Convert.ToDecimal(curr) - Convert.ToDecimal(prev)) < Math.Abs(Convert.ToDecimal(prev)) * dbr)
+                {
+                    // console.log("New value is within relative deadband.", p);
+                    return true;
+
+                }
+            }
+            else if (curr.IsBoolean())
+            {
+                if (dba > 0 && prev == curr)
+                    // console.log("New value is within bool deadband.", p);
+                    return true;
+
+            }
+            else if (curr.IsString())
+                return true;
+            return false;
+
+        }
+        #endregion
 
         #region methods
         void InitializeMeasurements()
@@ -238,6 +346,7 @@ namespace Odenwald.OpcUaPlugin
 
             metric.Timestamp = NewValue.SourceTimestamp;
             metric.OpcValue = NewValue.WrappedValue.Value;
+            metric.Opcstatus = NewValue.StatusCode.ToString();
             //metric.TypeName = "gauge";
             //metric.TypeInstanceName = "gauge";
             //metric.Interval = measurement.MonitorResolution;
@@ -264,18 +373,8 @@ namespace Odenwald.OpcUaPlugin
         void ReadMeasurement(PolledMeasurement measurement)
         {
             OpcUaMetric metric = new OpcUaMetric();
-            //metric.HostName = "localhost";
-            //metric.AdapterInstanceName = "OpcuaAdapterInstance";
-            //metric.AdapterName = "OpcuaAdapter";
-
-
-            //metric.TypeName = "gauge";
-            //metric.TypeInstanceName = "gauge";
-            //metric.Interval = measurement.PollInterval;
 
             metric.Measurement = (MeasurementDto)measurement;
-            //metric.Epoch = Util.GetNow();
-
 
 
             var readValue = new ReadValueId
@@ -294,11 +393,21 @@ namespace Odenwald.OpcUaPlugin
                 results: out results,
                 diagnosticInfos: out diag);
             var val = results[0];
-            metric.Measurement.LastOpcstatus = val.StatusCode.ToString();
+            //metric.Measurement.LastOpcstatus = val.StatusCode.ToString();
             metric.OpcValue = val.Value;
-            metric.Timestamp = val.SourceTimestamp;
-            l_metricCollection.Add(metric);
+
+
+            metric.Opcstatus = val.StatusCode.ToString();
+
+
+            if (QualifyMetric(ref metric))
+            {
+                metric.Measurement.LastOpcstatus = metric.Opcstatus;
+                metric.Measurement.LastValue = metric.OpcValue;
+                l_metricCollection.Add(metric);
+            }
         }
+     
 
         public void Dispose()
         {
@@ -311,7 +420,7 @@ namespace Odenwald.OpcUaPlugin
             GC.SuppressFinalize(this);
         }
 
-      
+
 
 
         #endregion

@@ -111,9 +111,9 @@ namespace Odenwald.OpcUaPlugin
             set { base["DeadbandAbsolute"] = value; }
         }
         [ConfigurationProperty("DeadbandRelative", IsRequired = true)]
-        public float DeadbandRelative
+        public decimal DeadbandRelative
         {
-            get { return (float)base["DeadbandRelative"]; }
+            get { return (decimal)base["DeadbandRelative"]; }
             set { base["DeadbandRelative"] = value; }
         }
         [ConfigurationProperty("Tags")]
