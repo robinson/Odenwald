@@ -36,6 +36,7 @@ namespace Odenwald.OpcUaPlugin
 
     public class OpcUaPlugin : IMetricsReadPlugin
     {
+        //TODO: 1. check last opc status 
         #region attributes
         static ILog l_logger = LogManager.GetLogger(typeof(OpcUaPlugin));
         string l_opcuaUrl;
@@ -46,6 +47,7 @@ namespace Odenwald.OpcUaPlugin
         BlockingCollection<OpcUaMetric> l_metricCollection;
         List<PolledMeasurement> PolledMeasurements;
         List<MonitoredMeasurement> MonitoredMeasurements;
+        static Dictionary<string, object> l_cache = new Dictionary<string, object>();
         #endregion
 
         #region imetricsreadplugin methods
@@ -163,26 +165,43 @@ namespace Odenwald.OpcUaPlugin
         #region helper
         bool QualifyMetric(ref OpcUaMetric metric)
         {
-            if (!PointIsValid(metric) || PointMatchesType(metric))
+            if (PointHasGoodOrDifferentBadStatus(metric))
             {
-                // Set de default value for the type specified
-                l_logger.ErrorFormat("Invalid point: measurement.name<{0}>, measurement.nodeId.value<{1}>, metric.value<{2}>", metric.Measurement.Name, metric.Measurement.NodeId, metric.OpcValue.ToString());
-                switch (metric.Measurement.DataType)
+                if (!l_cache.ContainsKey(metric.Measurement.Name))
                 {
-                    case "number":
-                        metric.OpcValue = 0;
-                        break;
-                    case "boolean":
-                        metric.OpcValue = false;
-                        break;
-                    case "string":
-                        metric.OpcValue = "";
-                        break;
-                    default:
-                        l_logger.Error("No valid datatype, ignoring point");
-                        break;
+                    l_cache.Add(metric.Measurement.Name, metric.OpcValue);
+                    metric.Measurement.LastOpcstatus = metric.Opcstatus;
+                    metric.Measurement.LastValue = metric.OpcValue;
                 }
-                return false;
+                else
+                {
+                    object lastvalue;
+                    l_cache.TryGetValue(metric.Measurement.Name, out lastvalue);
+                    metric.Measurement.LastValue = lastvalue;
+                }
+                
+
+                if (!PointIsValid(metric) || !PointMatchesType(metric))
+                {
+                    // Set de default value for the type specified
+                    l_logger.ErrorFormat("Invalid point: measurement.name<{0}>, measurement.nodeId.value<{1}>, metric.value<{2}>", metric.Measurement.Name, metric.Measurement.NodeId, metric.OpcValue.ToString());
+                    switch (metric.Measurement.DataType)
+                    {
+                        case "number":
+                            metric.OpcValue = 0;
+                            break;
+                        case "boolean":
+                            metric.OpcValue = false;
+                            break;
+                        case "string":
+                            metric.OpcValue = "";
+                            break;
+                        default:
+                            l_logger.Error("No valid datatype, ignoring point");
+                            break;
+                    }
+                    return false;
+                }
             }
             // Check for deadband
             if (PointIsWithinDeadband(metric)) return false;
@@ -340,17 +359,9 @@ namespace Odenwald.OpcUaPlugin
         void MonitorData(MonitoredMeasurement measurement, DataValue NewValue)
         {
             OpcUaMetric metric = new OpcUaMetric();
-            //metric.HostName = "localhost";
-            //metric.AdapterInstanceName = "OpcuaAdapterInstance";
-            //metric.AdapterName = "OpcuaAdapter";
-
             metric.Timestamp = NewValue.SourceTimestamp;
             metric.OpcValue = NewValue.WrappedValue.Value;
             metric.Opcstatus = NewValue.StatusCode.ToString();
-            //metric.TypeName = "gauge";
-            //metric.TypeInstanceName = "gauge";
-            //metric.Interval = measurement.MonitorResolution;
-
             metric.Measurement = (MeasurementDto)measurement;
 
             l_metricCollection.Add(metric);
@@ -375,14 +386,8 @@ namespace Odenwald.OpcUaPlugin
             OpcUaMetric metric = new OpcUaMetric();
 
             metric.Measurement = (MeasurementDto)measurement;
-
-
-            var readValue = new ReadValueId
-            {
-                NodeId = measurement.NodeId,
-                AttributeId = Attributes.Value
-            };
-            var nodesToRead = new ReadValueIdCollection() { readValue };
+           
+            var nodesToRead = OpcUaHelper.GetReadValueIdCollection(measurement.Path, l_session);
             DataValueCollection results;
             DiagnosticInfoCollection diag;
             l_session.Read(
@@ -402,12 +407,11 @@ namespace Odenwald.OpcUaPlugin
 
             if (QualifyMetric(ref metric))
             {
-                metric.Measurement.LastOpcstatus = metric.Opcstatus;
-                metric.Measurement.LastValue = metric.OpcValue;
+                l_cache[metric.Measurement.Name] = metric.OpcValue;
                 l_metricCollection.Add(metric);
-            }
+           } 
         }
-     
+
 
         public void Dispose()
         {

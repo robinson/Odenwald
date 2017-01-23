@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Odenwald.OpcUaPlugin", "Ode
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Odenwald.OpcUaPluginTest", "Tests\Odenwald.OpcUaPluginTest\Odenwald.OpcUaPluginTest.csproj", "{C46F6932-AB4C-4A49-A3BA-1F9690015A48}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Odenwald.InfluxDbPlugin", "Odenwald.InfluxDbPlugin\Odenwald.InfluxDbPlugin.csproj", "{084BE120-923F-4517-850C-17D1D5590AC9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -49,6 +51,10 @@ Global
 		{C46F6932-AB4C-4A49-A3BA-1F9690015A48}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C46F6932-AB4C-4A49-A3BA-1F9690015A48}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C46F6932-AB4C-4A49-A3BA-1F9690015A48}.Release|Any CPU.Build.0 = Release|Any CPU
+		{084BE120-923F-4517-850C-17D1D5590AC9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{084BE120-923F-4517-850C-17D1D5590AC9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{084BE120-923F-4517-850C-17D1D5590AC9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{084BE120-923F-4517-850C-17D1D5590AC9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -58,5 +64,6 @@ Global
 		{623527DA-7F19-4326-98D8-EA833857367C} = {5256FABB-EEFB-4508-A51C-EAC828656DE7}
 		{712B2914-BF62-4278-BFE2-EB6925760839} = {5256FABB-EEFB-4508-A51C-EAC828656DE7}
 		{C46F6932-AB4C-4A49-A3BA-1F9690015A48} = {BC6D364C-E228-46F3-B0DC-36E10395334B}
+		{084BE120-923F-4517-850C-17D1D5590AC9} = {5256FABB-EEFB-4508-A51C-EAC828656DE7}
 	EndGlobalSection
 EndGlobal

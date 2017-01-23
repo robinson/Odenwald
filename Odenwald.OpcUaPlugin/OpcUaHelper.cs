@@ -103,7 +103,111 @@ namespace Odenwald.OpcUaPlugin
             // return whatever was found.
             return nodes;
         }
-        
+
+        public static ReadValueIdCollection GetReadValueIdCollection(string tag, Session session)
+        {
+
+            var RootNode = ObjectIds.ObjectsFolder;
+            var sourceNodeId = FindNode(tag, RootNode, session);
+            var attributeId = Attributes.Value;
+            var readValue = new ReadValueId
+            {
+                NodeId = sourceNodeId,
+                AttributeId = attributeId
+            };
+            return new ReadValueIdCollection { readValue };
+        }
+        public static ReadValueIdCollection GetReadValueIdCollection(string tag, uint attributeId, Session session)
+        {
+
+            var RootNode = ObjectIds.ObjectsFolder;
+            var sourceNodeId = FindNode(tag, RootNode, session);
+            var readValue = new ReadValueId
+            {
+                NodeId = sourceNodeId,
+                AttributeId = attributeId
+            };
+            return new ReadValueIdCollection { readValue };
+        }
+        /// <summary>
+        /// find node
+        /// </summary>
+        /// <param name="tag"></param>
+        /// <param name="nodeId"></param>
+        /// <param name="session"></param>
+        /// <returns></returns>
+        private static NodeId FindNode(string tag, NodeId nodeId, Session session)
+        {
+            var folders = tag.Split('.');
+            var head = folders.FirstOrDefault();
+            NodeId found;
+            try
+            {
+                var subNodes = Browse(session, nodeId == null ? ObjectIds.ObjectsFolder : nodeId);
+                var subfound = subNodes.Find(n => n.DisplayName == head);
+
+                found =  ExpandedNodeId.ToNodeId(subfound.NodeId, session.NamespaceUris);
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(string.Format("The tag \"{0}\" doesn't exist on folder \"{1}\"", head, tag), ex);
+            }
+
+            return folders.Length == 1
+              ? found // last node, return it
+              : FindNode(string.Join(".", folders.Except(new[] { head })), found, session); // find sub nodes
+        }
+       
+      
+        private static ReferenceDescriptionCollection Browse(Session session, NodeId nodeId)
+        {
+            var desc = new BrowseDescription
+            {
+                NodeId = nodeId,
+                BrowseDirection = BrowseDirection.Forward,
+                IncludeSubtypes = true,
+                NodeClassMask = 0U,
+                ResultMask = 63U,
+            };
+            return Browse(session, desc, true);
+        }
+
+        private static ReferenceDescriptionCollection Browse(Session session, BrowseDescription nodeToBrowse, bool throwOnError)
+        {
+            try
+            {
+                var descriptionCollection = new ReferenceDescriptionCollection();
+                var nodesToBrowse = new BrowseDescriptionCollection { nodeToBrowse };
+                BrowseResultCollection results;
+                DiagnosticInfoCollection diagnosticInfos;
+                session.Browse(null, null, 0U, nodesToBrowse, out results, out diagnosticInfos);
+                ClientBase.ValidateResponse(results, nodesToBrowse);
+                ClientBase.ValidateDiagnosticInfos(diagnosticInfos, nodesToBrowse);
+                while (!StatusCode.IsBad(results[0].StatusCode))
+                {
+                    for (var index = 0; index < results[0].References.Count; ++index)
+                        descriptionCollection.Add(results[0].References[index]);
+                    if (results[0].References.Count == 0 || results[0].ContinuationPoint == null)
+                        return descriptionCollection;
+                    var continuationPoints = new ByteStringCollection();
+                    continuationPoints.Add(results[0].ContinuationPoint);
+                    session.BrowseNext(null, false, continuationPoints, out results, out diagnosticInfos);
+                    ClientBase.ValidateResponse(results, continuationPoints);
+                    ClientBase.ValidateDiagnosticInfos(diagnosticInfos, continuationPoints);
+                }
+                throw new ServiceResultException(results[0].StatusCode);
+            }
+            catch (Exception ex)
+            {
+                if (throwOnError)
+                    throw new ServiceResultException(ex, 2147549184U);
+                return null;
+            }
+        }
+
+
     }
+
 
 }
