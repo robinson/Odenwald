@@ -5,14 +5,15 @@ using System.Configuration;
 using System.Linq;
 using InfluxDB.Net.Models;
 using log4net;
+using Newtonsoft.Json.Linq;
 
 namespace Odenwald.InfluxDbPlugin
 {
-    public class InfluxDbAdapter : IMetricsWritePlugin
+    public class InfluxDbPlugin : IMetricsWritePlugin
     {
         #region attributes
-        static ILog l_logger = LogManager.GetLogger(typeof(InfluxDbAdapter));
-        InfluxDbAdapterConfig l_influxDbConfig;
+        static ILog l_logger = LogManager.GetLogger(typeof(InfluxDbPlugin));
+        InfluxDbPluginConfig l_influxDbConfig;
         InfluxDb l_influxDbClient;
         #endregion
 
@@ -20,7 +21,7 @@ namespace Odenwald.InfluxDbPlugin
 
         public void Configure()
         {
-            l_influxDbConfig = ConfigurationManager.GetSection("InfluxDb") as InfluxDbAdapterConfig;
+            l_influxDbConfig = ConfigurationManager.GetSection("InfluxDb") as InfluxDbPluginConfig;
             if (l_influxDbConfig == null)
             {
                 throw new Exception("Cannot get configuration section : InfluxDb");
@@ -46,13 +47,20 @@ namespace Odenwald.InfluxDbPlugin
 
         public void Write(MetricValue metric)
         {
+            if (metric.Extension.Equals("")) // no extension, nothing to write
+                return;
+            var extension = JObject.Parse(metric.Extension);
+            if (extension["OpcValue"] == null) // no OpcValue, nothing to write
+                return;
+            var opcValue = extension["OpcValue"];
+            var opcName = extension["Name"].ToString();
             var p = new Point()
             {
-                Measurement = metric.HostName,
+                Measurement = opcName,
                 Precision = InfluxDB.Net.Enums.TimeUnit.Seconds,
                 Fields = new Dictionary<string, object>()
                 {
-                    {"Value", metric.Values},
+                    {"Value",opcValue},
                     {"Timestamp", DateTime.Now}
                 },
                 Tags = metric.MetaData.ToDictionary(k => k.Key, k => k.Value == "" || k.Value == null ? null : (object)k.Value)

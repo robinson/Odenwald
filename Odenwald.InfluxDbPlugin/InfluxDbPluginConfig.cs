@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 
 namespace Odenwald.InfluxDbPlugin
 {
-    public sealed class InfluxDbAdapterConfig : ConfigurationSection
+    public sealed class InfluxDbPluginConfig : ConfigurationSection
     {
-        public static InfluxDbAdapterConfig GetConfig()
+        public static InfluxDbPluginConfig GetConfig()
         {
-            return (InfluxDbAdapterConfig)ConfigurationManager.GetSection("Opcua") ?? new InfluxDbAdapterConfig();
+            return (InfluxDbPluginConfig)ConfigurationManager.GetSection("Opcua") ?? new InfluxDbPluginConfig();
         }
         [ConfigurationProperty("Settings", IsRequired = true)]
         public SettingsConfig Settings
