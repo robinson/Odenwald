@@ -6,6 +6,7 @@ using System.Linq;
 using InfluxDB.Net.Models;
 using log4net;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
 
 namespace Odenwald.InfluxDbPlugin
 {
@@ -55,6 +56,9 @@ namespace Odenwald.InfluxDbPlugin
             var opcValue = extension["OpcValue"];
             var opcName = extension["Name"].ToString();
             var timeStamp = extension["Timestamp"] != null? (DateTime)extension["Timestamp"]:DateTime.Now;
+            Dictionary<string, object> tags = null;
+            if (extension["Tags"] != null)
+                tags = JsonConvert.DeserializeObject<Dictionary<string, object>>((string)extension["Tags"]);
             var p = new Point()
             {
                 Measurement = opcName,
@@ -64,7 +68,7 @@ namespace Odenwald.InfluxDbPlugin
                     {"Value",opcValue},
                     {"Timestamp", timeStamp}
                 },
-                Tags = metric.MetaData.ToDictionary(k => k.Key, k => k.Value == "" || k.Value == null ? null : (object)k.Value)
+                Tags = tags// metric.MetaData.ToDictionary(k => k.Key, k => k.Value == "" || k.Value == null ? null : (object)k.Value)
             };
             var writeResponse = l_influxDbClient.WriteAsync(l_influxDbConfig.Settings.Database, p);
 

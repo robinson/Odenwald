@@ -35,7 +35,7 @@ namespace Odenwald.OpcUaPlugin
             l_opcuaAdapterConfig = ConfigurationManager.GetSection("OpcUa") as OpcUaPluginConfig;
             if (l_opcuaAdapterConfig == null)
             {
-                throw new Exception("Cannot get configuration section : Opcua");
+                throw new Exception("Cannot get configuration section : OpcUa");
             }
             l_opcuaUrl = l_opcuaAdapterConfig.Settings.Url;
 
@@ -109,7 +109,6 @@ namespace Odenwald.OpcUaPlugin
                 return null;
             List<MetricValue> metricList = new List<MetricValue>();
 
-
             while (l_metricCollection.Count > 0)
             {
 
@@ -158,12 +157,12 @@ namespace Odenwald.OpcUaPlugin
                     l_cache.TryGetValue(metric.Measurement.Name, out lastvalue);
                     metric.Measurement.LastValue = lastvalue;
                 }
-                
+
 
                 if (!PointIsValid(metric) || !PointMatchesType(metric))
                 {
                     // Set de default value for the type specified
-                    l_logger.ErrorFormat("Invalid point: measurement.name<{0}>, measurement.nodeId.value<{1}>, metric.value<{2}>", metric.Measurement.Name, metric.Measurement.NodeId, metric.OpcValue.ToString());
+                    l_logger.ErrorFormat("Invalid point: measurement.name<{0}>, measurement.path<{1}>, metric.value<{2}>", metric.Measurement.Name, metric.Measurement.Path, metric.OpcValue.ToString());
                     switch (metric.Measurement.DataType)
                     {
                         case "number":
@@ -271,19 +270,25 @@ namespace Odenwald.OpcUaPlugin
             PolledMeasurements = new List<PolledMeasurement>();
             foreach (MeasurementConfig item in l_opcuaAdapterConfig.Measurements)
             {
-
+                Dictionary<string, string> tags = null;
+                if (!item.Tags.Equals(""))
+                    tags = item.Tags.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries)
+                                .Select(part => part.Split(':'))
+                                .ToDictionary(split => split[0], split => split[1]);
                 switch (item.CollectionType)
                 {
                     case "monitored":
+
                         var monitoredpoint = new MonitoredMeasurement()
                         {
                             Name = item.Name,
-                            NodeId = item.NodeId,
                             Path = item.Path,
                             MonitorResolution = item.MonitorResolution > 0 ? item.MonitorResolution : 0,
                             DeadbandAbsolute = item.DeadbandAbsolute > 0 ? item.DeadbandAbsolute : 0,
                             DeadbandRelative = item.DeadbandRelative > 0 ? item.DeadbandRelative : 0,
-                            DataType = item.DataType
+                            DataType = item.DataType,
+                            Tags = tags
+
                         };
 
                         MonitoredMeasurements.Add(monitoredpoint);
@@ -292,12 +297,12 @@ namespace Odenwald.OpcUaPlugin
                         var polledPoint = new PolledMeasurement()
                         {
                             Name = item.Name,
-                            NodeId = item.NodeId,
                             Path = item.Path,
                             DeadbandAbsolute = item.DeadbandAbsolute > 0 ? item.DeadbandAbsolute : 0,
                             DeadbandRelative = item.DeadbandRelative > 0 ? item.DeadbandRelative : 0,
                             PollInterval = item.PollInterval,
-                            DataType = item.DataType
+                            DataType = item.DataType,
+                            Tags = tags
                         };
 
                         PolledMeasurements.Add(polledPoint);
@@ -314,10 +319,11 @@ namespace Odenwald.OpcUaPlugin
         {
             foreach (var item in MonitoredMeasurements)
             {
-                NodeId nodeItem = new NodeId(item.NodeId);
+                var nodeId = OpcUaHelper.FindNode(item.Path, ObjectIds.ObjectsFolder, l_session);
+                
                 MonitoredItem monitoredItem = new MonitoredItem()
                 {
-                    StartNodeId = item.NodeId,
+                    StartNodeId = nodeId,
                     AttributeId = Attributes.Value,
                     DisplayName = item.Path,
                     SamplingInterval = item.MonitorResolution
@@ -365,7 +371,7 @@ namespace Odenwald.OpcUaPlugin
             OpcMetric metric = new OpcMetric();
 
             metric.Measurement = (MeasurementDto)measurement;
-           
+
             var nodesToRead = OpcUaHelper.GetReadValueIdCollection(measurement.Path, l_session);
             DataValueCollection results;
             DiagnosticInfoCollection diag;
@@ -388,7 +394,7 @@ namespace Odenwald.OpcUaPlugin
             {
                 l_cache[metric.Measurement.Name] = metric.OpcValue;
                 l_metricCollection.Add(metric);
-           } 
+            }
         }
 
 

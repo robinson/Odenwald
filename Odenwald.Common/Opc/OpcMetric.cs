@@ -24,7 +24,7 @@ namespace Odenwald.Common.Opc
 
         public string JsonString()
         {
-            object opcUaObject = new
+            object opcObject = new
             {
                 OpcValue = OpcValue,
                 Timestamp = Timestamp,
@@ -36,9 +36,10 @@ namespace Odenwald.Common.Opc
                 DeadbandAbsolute = Measurement.DeadbandAbsolute,
                 DeadbandRelative = Measurement.DeadbandRelative,
                 LastValue = Measurement.LastValue,
-                LastOpcstatus = Measurement.LastOpcstatus
+                LastOpcstatus = Measurement.LastOpcstatus,
+                Tags = Measurement.Tags
             };
-            return (JsonConvert.SerializeObject(opcUaObject));
+            return (JsonConvert.SerializeObject(opcObject));
         }
     }
 }

@@ -136,7 +136,7 @@ namespace Odenwald.OpcUaPlugin
         /// <param name="nodeId"></param>
         /// <param name="session"></param>
         /// <returns></returns>
-        private static NodeId FindNode(string tag, NodeId nodeId, Session session)
+        public static NodeId FindNode(string tag, NodeId nodeId, Session session)
         {
             var folders = tag.Split('.');
             var head = folders.FirstOrDefault();

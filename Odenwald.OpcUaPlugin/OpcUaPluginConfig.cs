@@ -117,48 +117,12 @@ namespace Odenwald.OpcUaPlugin
             set { base["DeadbandRelative"] = value; }
         }
         [ConfigurationProperty("Tags")]
-        [ConfigurationCollection(typeof(TagCollection), AddItemName = "Tag")]
-        public TagCollection Tags
+        public string Tags
         {
-            get { return (TagCollection)base["Tags"]; }
+            get { return (string)base["Tags"]; }
             set { base["Tags"] = value; }
         }
-
-    }
-    public sealed class TagCollection : ConfigurationElementCollection
-    {
-        protected override ConfigurationElement CreateNewElement()
-        {
-            return new TagConfig();
-        }
-
-        protected override object GetElementKey(ConfigurationElement element)
-        {
-            return (((TagConfig)element).UniqueId);
-        }
-    }
-    public sealed class TagConfig : ConfigurationElement
-    {
-        public TagConfig()
-        {
-            UniqueId = Guid.NewGuid();
-        }
-
-        internal Guid UniqueId { get; set; }
-
-        [ConfigurationProperty("Name", IsRequired = true)]
-        public string Name
-        {
-            get { return (string)base["Name"]; }
-            set { base["Name"] = value; }
-        }
-
-        [ConfigurationProperty("Value", IsRequired = true)]
-        public string Value
-        {
-            get { return (string)base["Value"]; }
-            set { base["Value"] = value; }
-        }
-    }
+    }  
+  
    
 }

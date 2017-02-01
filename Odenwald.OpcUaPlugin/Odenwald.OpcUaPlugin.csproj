@@ -64,7 +64,6 @@
     <Compile Include="OpcUaHelper.cs" />
     <Compile Include="OpcUaPlugin.cs" />
     <Compile Include="OpcUaPluginConfig.cs" />
-    <Compile Include="OpcUaMetric.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
