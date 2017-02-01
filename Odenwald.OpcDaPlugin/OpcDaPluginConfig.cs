@@ -5,13 +5,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Odenwald.OpcUaPlugin
+namespace Odenwald.OpcDaPlugin
 {
-    public sealed class OpcUaPluginConfig : ConfigurationSection
+    public sealed class OpcDaPluginConfig : ConfigurationSection
     {
-        public static OpcUaPluginConfig GetConfig()
+        public static OpcDaPluginConfig GetConfig()
         {
-            return (OpcUaPluginConfig)ConfigurationManager.GetSection("OpcUa") ?? new OpcUaPluginConfig();
+            return (OpcDaPluginConfig)ConfigurationManager.GetSection("OpcDa") ?? new OpcDaPluginConfig();
         }
         [ConfigurationProperty("Settings", IsRequired = true)]
         public SettingsConfig Settings
@@ -26,7 +26,7 @@ namespace Odenwald.OpcUaPlugin
             get { return (MeasurementCollection)base["Measurements"]; }
             set { base["Measurements"] = value; }
         }
-    }   
+    }
     public sealed class SettingsConfig : ConfigurationElement
     {
         [ConfigurationProperty("FailoverTimeout", IsRequired = true)]
@@ -160,5 +160,5 @@ namespace Odenwald.OpcUaPlugin
             set { base["Value"] = value; }
         }
     }
-   
+
 }

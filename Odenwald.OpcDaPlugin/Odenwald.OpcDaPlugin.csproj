@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{712B2914-BF62-4278-BFE2-EB6925760839}</ProjectGuid>
+    <ProjectGuid>{3C3FD86F-220D-418F-B964-3C4590824FCE}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Odenwald.OpcUaPlugin</RootNamespace>
-    <AssemblyName>Odenwald.OpcUaPlugin</AssemblyName>
+    <RootNamespace>Odenwald.OpcDaPlugin</RootNamespace>
+    <AssemblyName>Odenwald.OpcDaPlugin</AssemblyName>
     <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -30,25 +30,18 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="log4net, Version=1.2.15.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\log4net.2.0.5\lib\net45-full\log4net.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="log4net">
+      <HintPath>..\Odenwald.ConsolePlugin\bin\Debug\log4net.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Opc.Ua.Client, Version=1.2.336.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="OpcComRcw, Version=2.0.105.1, Culture=neutral, PublicKeyToken=9a40e993cbface53, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\libs\Opc.Ua.Client.dll</HintPath>
+      <HintPath>..\libs\OpcComRcw.dll</HintPath>
     </Reference>
-    <Reference Include="Opc.Ua.Configuration, Version=1.2.336.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\libs\Opc.Ua.Configuration.dll</HintPath>
+    <Reference Include="OpcNetApi">
+      <HintPath>..\libs\OpcNetApi.dll</HintPath>
     </Reference>
-    <Reference Include="Opc.Ua.Core, Version=1.2.336.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\libs\Opc.Ua.Core.dll</HintPath>
+    <Reference Include="OpcNetApi.Com">
+      <HintPath>..\libs\OpcNetApi.Com.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
@@ -61,27 +54,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="OpcUaHelper.cs" />
-    <Compile Include="OpcUaPlugin.cs" />
-    <Compile Include="OpcUaPluginConfig.cs" />
-    <Compile Include="OpcUaMetric.cs" />
+    <Compile Include="OpcDaHelper.cs" />
+    <Compile Include="OpcDaMetric.cs" />
+    <Compile Include="OpcDaPlugin.cs" />
+    <Compile Include="OpcDaPluginConfig.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="OpcUa.config">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Odenwald.Common\Odenwald.Common.csproj">
-      <Project>{fef57f91-04c1-4d42-ba2e-737697ab26c1}</Project>
-      <Name>Odenwald.Common</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Odenwald\Odenwald.csproj">
       <Project>{bb7a7712-cc11-4d95-83dc-a0ab28714860}</Project>
       <Name>Odenwald</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="OpcDa.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

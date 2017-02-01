@@ -54,6 +54,7 @@ namespace Odenwald.InfluxDbPlugin
                 return;
             var opcValue = extension["OpcValue"];
             var opcName = extension["Name"].ToString();
+            var timeStamp = extension["Timestamp"] != null? (DateTime)extension["Timestamp"]:DateTime.Now;
             var p = new Point()
             {
                 Measurement = opcName,
@@ -61,7 +62,7 @@ namespace Odenwald.InfluxDbPlugin
                 Fields = new Dictionary<string, object>()
                 {
                     {"Value",opcValue},
-                    {"Timestamp", DateTime.Now}
+                    {"Timestamp", timeStamp}
                 },
                 Tags = metric.MetaData.ToDictionary(k => k.Key, k => k.Value == "" || k.Value == null ? null : (object)k.Value)
             };

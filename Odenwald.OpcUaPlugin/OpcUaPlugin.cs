@@ -1,5 +1,6 @@
 ﻿using log4net;
 using Odenwald;
+using Odenwald.Common.Opc;
 using Opc.Ua;
 using Opc.Ua.Client;
 using System;
@@ -12,28 +13,6 @@ using System.Threading.Tasks;
 
 namespace Odenwald.OpcUaPlugin
 {
-    public class MeasurementDto
-    {
-        public string Name { get; set; }
-
-        public string DataType { get; set; }
-        public string NodeId { get; set; }
-        public string AttributeId { get; set; }
-        public string Path { get; set; }
-        public int DeadbandAbsolute { get; set; }
-        public decimal DeadbandRelative { get; set; }
-        public object LastValue { get; set; }
-        public string LastOpcstatus { get; set; }
-    }
-    public class MonitoredMeasurement : MeasurementDto
-    {
-        public int MonitorResolution { get; set; }
-    }
-    public class PolledMeasurement : MeasurementDto
-    {
-        public int PollInterval { get; set; }
-    }
-
     public class OpcUaPlugin : IMetricsReadPlugin
     {
         //TODO: 1. check last opc status 
@@ -44,7 +23,7 @@ namespace Odenwald.OpcUaPlugin
         OpcUaPluginConfig l_opcuaAdapterConfig;
         Session l_session;
         Subscription l_subscription;
-        BlockingCollection<OpcUaMetric> l_metricCollection;
+        BlockingCollection<OpcMetric> l_metricCollection;
         List<PolledMeasurement> PolledMeasurements;
         List<MonitoredMeasurement> MonitoredMeasurements;
         static Dictionary<string, object> l_cache = new Dictionary<string, object>();
@@ -107,7 +86,7 @@ namespace Odenwald.OpcUaPlugin
             l_session = Session.Create(l_applicationConfig, new ConfiguredEndpoint(null, new EndpointDescription(l_opcuaUrl)), true, "Odenwald", 60000, null, null);//EndpointDescription need to be changed according to your OPC server
             l_subscription = new Subscription(l_session.DefaultSubscription) { PublishingInterval = 1000 };
 
-            l_metricCollection = new BlockingCollection<OpcUaMetric>();
+            l_metricCollection = new BlockingCollection<OpcMetric>();
             StartMonitoring();
             StartPolling();
         }
@@ -134,7 +113,7 @@ namespace Odenwald.OpcUaPlugin
             while (l_metricCollection.Count > 0)
             {
 
-                OpcUaMetric data = null;
+                OpcMetric data = null;
                 try
                 {
                     data = l_metricCollection.Take();
@@ -163,7 +142,7 @@ namespace Odenwald.OpcUaPlugin
         #endregion
 
         #region helper
-        bool QualifyMetric(ref OpcUaMetric metric)
+        bool QualifyMetric(ref OpcMetric metric)
         {
             if (PointHasGoodOrDifferentBadStatus(metric))
             {
@@ -212,7 +191,7 @@ namespace Odenwald.OpcUaPlugin
             }
             return true;
         }
-        bool PointMatchesType(OpcUaMetric metric)
+        bool PointMatchesType(OpcMetric metric)
         {
             var match = (metric.OpcValue.IsNumber() && metric.Measurement.DataType == "number")
                 || metric.OpcValue.IsBoolean() && metric.Measurement.DataType == "boolean"
@@ -225,13 +204,13 @@ namespace Odenwald.OpcUaPlugin
             }
             return match;
         }
-        bool PointIsValid(OpcUaMetric p)
+        bool PointIsValid(OpcMetric p)
         {
             // check if the value is a type that we can handle (number or a bool).
             return (p.OpcValue != null && (p.OpcValue.IsBoolean() || p.OpcValue.IsNumber())) || p.OpcValue.IsString();
 
         }
-        bool PointHasGoodOrDifferentBadStatus(OpcUaMetric p)
+        bool PointHasGoodOrDifferentBadStatus(OpcMetric p)
         {
             var curr = p.Opcstatus;
             var prev = p.Measurement.LastOpcstatus;
@@ -241,7 +220,7 @@ namespace Odenwald.OpcUaPlugin
         }
 
 
-        bool PointIsWithinDeadband(OpcUaMetric metric)
+        bool PointIsWithinDeadband(OpcMetric metric)
         {
             // some vars for shorter statements later on.
             var curr = metric.OpcValue;
@@ -358,7 +337,7 @@ namespace Odenwald.OpcUaPlugin
         }
         void MonitorData(MonitoredMeasurement measurement, DataValue NewValue)
         {
-            OpcUaMetric metric = new OpcUaMetric();
+            OpcMetric metric = new OpcMetric();
             metric.Timestamp = NewValue.SourceTimestamp;
             metric.OpcValue = NewValue.WrappedValue.Value;
             metric.Opcstatus = NewValue.StatusCode.ToString();
@@ -383,7 +362,7 @@ namespace Odenwald.OpcUaPlugin
         }
         void ReadMeasurement(PolledMeasurement measurement)
         {
-            OpcUaMetric metric = new OpcUaMetric();
+            OpcMetric metric = new OpcMetric();
 
             metric.Measurement = (MeasurementDto)measurement;
            

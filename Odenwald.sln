@@ -21,6 +21,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Odenwald.OpcUaPluginTest", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Odenwald.InfluxDbPlugin", "Odenwald.InfluxDbPlugin\Odenwald.InfluxDbPlugin.csproj", "{084BE120-923F-4517-850C-17D1D5590AC9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Odenwald.OpcDaPlugin", "Odenwald.OpcDaPlugin\Odenwald.OpcDaPlugin.csproj", "{3C3FD86F-220D-418F-B964-3C4590824FCE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Odenwald.Common", "Odenwald.Common\Odenwald.Common.csproj", "{FEF57F91-04C1-4D42-BA2E-737697AB26C1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -55,6 +59,14 @@ Global
 		{084BE120-923F-4517-850C-17D1D5590AC9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{084BE120-923F-4517-850C-17D1D5590AC9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{084BE120-923F-4517-850C-17D1D5590AC9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3C3FD86F-220D-418F-B964-3C4590824FCE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3C3FD86F-220D-418F-B964-3C4590824FCE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3C3FD86F-220D-418F-B964-3C4590824FCE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3C3FD86F-220D-418F-B964-3C4590824FCE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FEF57F91-04C1-4D42-BA2E-737697AB26C1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FEF57F91-04C1-4D42-BA2E-737697AB26C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FEF57F91-04C1-4D42-BA2E-737697AB26C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FEF57F91-04C1-4D42-BA2E-737697AB26C1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -65,5 +77,6 @@ Global
 		{712B2914-BF62-4278-BFE2-EB6925760839} = {5256FABB-EEFB-4508-A51C-EAC828656DE7}
 		{C46F6932-AB4C-4A49-A3BA-1F9690015A48} = {BC6D364C-E228-46F3-B0DC-36E10395334B}
 		{084BE120-923F-4517-850C-17D1D5590AC9} = {5256FABB-EEFB-4508-A51C-EAC828656DE7}
+		{3C3FD86F-220D-418F-B964-3C4590824FCE} = {5256FABB-EEFB-4508-A51C-EAC828656DE7}
 	EndGlobalSection
 EndGlobal
