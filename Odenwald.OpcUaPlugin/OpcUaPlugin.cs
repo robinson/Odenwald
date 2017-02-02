@@ -3,26 +3,28 @@ using Odenwald;
 using Odenwald.Common.Opc;
 using Opc.Ua;
 using Opc.Ua.Client;
+using Opc.Ua.Configuration;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Odenwald.OpcUaPlugin
 {
-    public class OpcUaPlugin : IMetricsReadPlugin
+    public class OpcUaPlugin : IMetricsReadPlugin, IDisposable
     {
         //TODO: 1. check last opc status 
         #region attributes
         static ILog l_logger = LogManager.GetLogger(typeof(OpcUaPlugin));
-        string l_opcuaUrl;
-        ApplicationConfiguration l_applicationConfig;
-        OpcUaPluginConfig l_opcuaAdapterConfig;
+        //string l_opcuaUrl;
+        //ApplicationConfiguration l_applicationConfig;
+        OpcPluginConfig l_opcuaPluginConfig;
         Session l_session;
-        Subscription l_subscription;
+        //Subscription l_subscription;
         BlockingCollection<OpcMetric> l_metricCollection;
         List<PolledMeasurement> PolledMeasurements;
         List<MonitoredMeasurement> MonitoredMeasurements;
@@ -32,76 +34,86 @@ namespace Odenwald.OpcUaPlugin
         #region imetricsreadplugin methods
         public void Configure()
         {
-            l_opcuaAdapterConfig = ConfigurationManager.GetSection("OpcUa") as OpcUaPluginConfig;
-            if (l_opcuaAdapterConfig == null)
+            l_opcuaPluginConfig = OpcPluginConfig.GetConfig("OpcUa");// ConfigurationManager.GetSection("OpcUa") as OpcPluginConfig;
+            if (l_opcuaPluginConfig == null)
             {
                 throw new Exception("Cannot get configuration section : OpcUa");
             }
-            l_opcuaUrl = l_opcuaAdapterConfig.Settings.Url;
-
-            l_applicationConfig = new ApplicationConfiguration()
-            {
-                ApplicationName = "Odenwald",
-                ApplicationType = ApplicationType.Client,
-                SecurityConfiguration = new SecurityConfiguration
-                {
-                    ApplicationCertificate = new CertificateIdentifier
-                    {
-                        StoreType = @"Windows",
-                        StorePath = @"CurrentUser\My",
-                        SubjectName = Utils.Format(@"CN={0}, DC={1}",
-                       "Odenwald",
-                       System.Net.Dns.GetHostName())
-                    },
-                    TrustedPeerCertificates = new CertificateTrustList
-                    {
-                        StoreType = @"Windows",
-                        StorePath = @"CurrentUser\TrustedPeople",
-                    },
-                    NonceLength = 32,
-                    AutoAcceptUntrustedCertificates = true
-                },
-                TransportConfigurations = new TransportConfigurationCollection(),
-                TransportQuotas = new TransportQuotas { OperationTimeout = 15000 },
-                ClientConfiguration = new ClientConfiguration { DefaultSessionTimeout = 60000 }
-            };
-            l_applicationConfig.Validate(ApplicationType.Client);
-            if (l_applicationConfig.SecurityConfiguration.AutoAcceptUntrustedCertificates)
-            {
-                l_applicationConfig.CertificateValidator.CertificateValidation += (s, e) =>
-                { e.Accept = (e.Error.StatusCode == StatusCodes.BadCertificateUntrusted); };
-            }
+            
+            //l_opcuaUrl = l_opcuaPluginConfig.Settings.Url;
+            //lth: this connect is not safe.
+            //l_applicationConfig = new ApplicationConfiguration()
+            //{
+            //    ApplicationName = "Odenwald",
+            //    ApplicationType = ApplicationType.Client,
+            //    SecurityConfiguration = new SecurityConfiguration
+            //    {
+            //        ApplicationCertificate = new CertificateIdentifier
+            //        {
+            //            StoreType = @"Windows",
+            //            StorePath = @"CurrentUser\My",
+            //            SubjectName = Utils.Format(@"CN={0}, DC={1}",
+            //           "Odenwald",
+            //           System.Net.Dns.GetHostName())
+            //        },
+            //        TrustedPeerCertificates = new CertificateTrustList
+            //        {
+            //            StoreType = @"Windows",
+            //            StorePath = @"CurrentUser\TrustedPeople",
+            //        },
+            //        NonceLength = 32,
+            //        AutoAcceptUntrustedCertificates = true
+            //    },
+            //    TransportConfigurations = new TransportConfigurationCollection(),
+            //    TransportQuotas = new TransportQuotas { OperationTimeout = 15000 },
+            //    ClientConfiguration = new ClientConfiguration { DefaultSessionTimeout = 60000 }
+            //};
+            //l_applicationConfig.Validate(ApplicationType.Client);
+            //if (l_applicationConfig.SecurityConfiguration.AutoAcceptUntrustedCertificates)
+            //{
+            //    l_applicationConfig.CertificateValidator.CertificateValidation += (s, e) =>
+            //    { e.Accept = (e.Error.StatusCode == StatusCodes.BadCertificateUntrusted); };
+            //}
 
 
         }
-
-        public void Flush()
-        {
-            l_logger.Debug("Flush");
-        }
-
+       
         public void Start()
         {
             InitializeMeasurements();
-            l_session = Session.Create(l_applicationConfig, new ConfiguredEndpoint(null, new EndpointDescription(l_opcuaUrl)), true, "Odenwald", 60000, null, null);//EndpointDescription need to be changed according to your OPC server
-            l_subscription = new Subscription(l_session.DefaultSubscription) { PublishingInterval = 1000 };
+            l_session = InitializeSession(new Uri(l_opcuaPluginConfig.Settings.Url));
+            //lth: create session is not safe
+            //l_session = Session.Create(l_applicationConfig, new ConfiguredEndpoint(null, new EndpointDescription(l_opcuaUrl)), true, "Odenwald", 60000, null, null);//EndpointDescription need to be changed according to your OPC server
+            //l_subscription = new Subscription(l_session.DefaultSubscription) { PublishingInterval = 1000 };
 
             l_metricCollection = new BlockingCollection<OpcMetric>();
             StartMonitoring();
             StartPolling();
         }
+       
 
         public void Stop()
         {
-            //unsubscribe
-            l_subscription.RemoveItems(l_subscription.MonitoredItems);
-            l_subscription.Delete(true);
-            l_session.RemoveSubscription(l_subscription);
-            //close
-            l_session.Close();
-
+            //unsubscribe and close session
+            if (l_session != null)
+            {
+                for (int i = 0; i < l_session.Subscriptions.Count(); i++)
+                {
+                    var sub = l_session.Subscriptions.ToList()[i];
+                    Unsubscribe(sub);
+                }
+                l_session.RemoveSubscriptions(l_session.Subscriptions.ToList());
+                l_session.Close();
+                l_session.Dispose();
+            }
         }
-
+        void Unsubscribe(Subscription sub)
+        {
+            sub.RemoveItems(sub.MonitoredItems);
+            sub.Delete(true);
+            l_session.RemoveSubscription(sub);
+            sub.Dispose();
+        }
 
         public IList<MetricValue> Read()
         {
@@ -264,11 +276,88 @@ namespace Odenwald.OpcUaPlugin
         #endregion
 
         #region methods
+        private Session InitializeSession(Uri url, X509Certificate2 applicationCertificate = null )
+        {
+            var certificateValidator = new CertificateValidator();
+            certificateValidator.CertificateValidation += (sender, eventArgs) =>
+            {
+                if (ServiceResult.IsGood(eventArgs.Error))
+                    eventArgs.Accept = true;
+                else if ((eventArgs.Error.StatusCode.Code == StatusCodes.BadCertificateUntrusted) && true) // AutoAcceptUntrustedCertificates = true;
+                    eventArgs.Accept = true;
+                else
+                    throw new Exception(string.Format("Failed to validate certificate with error code {0}: {1}, statusCode: {2}", eventArgs.Error.Code, eventArgs.Error.AdditionalInfo, eventArgs.Error.StatusCode));
+            };
+            // Build the application configuration
+            var appInstance = new ApplicationInstance
+            {
+                ApplicationType = ApplicationType.Client,
+                ConfigSectionName = "Odenwald",
+                ApplicationConfiguration = new ApplicationConfiguration
+                {
+                    ApplicationUri = url.ToString(),
+                    ApplicationName = "Odenwald",
+                    ApplicationType = ApplicationType.Client,
+                    CertificateValidator = certificateValidator,
+                    ServerConfiguration = new ServerConfiguration
+                    {
+                        MaxSubscriptionCount = 100,
+                        MaxMessageQueueSize = 10,
+                        MaxNotificationQueueSize = 100,
+                        MaxPublishRequestCount = 20
+                    },
+                    SecurityConfiguration = new SecurityConfiguration
+                    {
+                        AutoAcceptUntrustedCertificates = true
+                    },
+                    TransportQuotas = new TransportQuotas
+                    {
+                        OperationTimeout = 600000,
+                        MaxStringLength = 1048576,
+                        MaxByteStringLength = 1048576,
+                        MaxArrayLength = 65535,
+                        MaxMessageSize = 4194304,
+                        MaxBufferSize = 65535,
+                        ChannelLifetime = 600000,
+                        SecurityTokenLifetime = 3600000
+                    },
+                    ClientConfiguration = new ClientConfiguration
+                    {
+                        DefaultSessionTimeout = 60000,
+                        MinSubscriptionLifetime = 10000
+                    },
+                    DisableHiResClock = true
+                }
+            };
+
+            // Assign a application certificate (when specified)
+            if (applicationCertificate != null)
+                appInstance.ApplicationConfiguration.SecurityConfiguration.ApplicationCertificate = new CertificateIdentifier(applicationCertificate);
+
+            // Find the endpoint to be used
+            var endpoints = OpcUaHelper.SelectEndpoint(url, false);//UseMessageSecurity = false;
+
+            // Create the OPC session:
+            var session = Session.Create(
+                configuration: appInstance.ApplicationConfiguration,
+                endpoint: new ConfiguredEndpoint(
+                    collection: null,
+                    description: endpoints,
+                    configuration: EndpointConfiguration.Create(applicationConfiguration: appInstance.ApplicationConfiguration)),
+                updateBeforeConnect: false,
+                checkDomain: false,
+                sessionName: "Odenwald",
+                sessionTimeout: 60000U,
+                identity: null,
+                preferredLocales: new string[] { });
+
+            return session;
+        }
         void InitializeMeasurements()
         {
             MonitoredMeasurements = new List<MonitoredMeasurement>();
             PolledMeasurements = new List<PolledMeasurement>();
-            foreach (MeasurementConfig item in l_opcuaAdapterConfig.Measurements)
+            foreach (MeasurementConfig item in l_opcuaPluginConfig.Measurements)
             {
                 Dictionary<string, string> tags = null;
                 if (!item.Tags.Equals(""))
@@ -320,19 +409,28 @@ namespace Odenwald.OpcUaPlugin
             foreach (var item in MonitoredMeasurements)
             {
                 var nodeId = OpcUaHelper.FindNode(item.Path, ObjectIds.ObjectsFolder, l_session);
-                
+                var sub = new Subscription
+                {
+                    PublishingInterval = item.MonitorResolution,
+                    PublishingEnabled = true,
+                    LifetimeCount = 0,
+                    KeepAliveCount = 0,
+                    DisplayName = item.Path,
+                    Priority = byte.MaxValue
+                };
                 MonitoredItem monitoredItem = new MonitoredItem()
                 {
                     StartNodeId = nodeId,
                     AttributeId = Attributes.Value,
-                    DisplayName = item.Path,
+                    DisplayName = item.Name,
                     SamplingInterval = item.MonitorResolution
                 };
-                l_subscription.AddItem(monitoredItem);
-                l_session.AddSubscription(l_subscription);
+               
+                sub.AddItem(monitoredItem);
+                l_session.AddSubscription(sub);
 
-                l_subscription.Create();
-                l_subscription.ApplyChanges();
+                sub.Create();
+                sub.ApplyChanges();
                 monitoredItem.Notification += (monitored, args) =>
                 {
                     var p = (MonitoredItemNotification)args.NotificationValue;
@@ -371,7 +469,7 @@ namespace Odenwald.OpcUaPlugin
             OpcMetric metric = new OpcMetric();
 
             metric.Measurement = (MeasurementDto)measurement;
-
+            //check server is connected??
             var nodesToRead = OpcUaHelper.GetReadValueIdCollection(measurement.Path, l_session);
             DataValueCollection results;
             DiagnosticInfoCollection diag;

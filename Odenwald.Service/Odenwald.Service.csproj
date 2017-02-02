@@ -132,6 +132,8 @@ xcopy "$(SolutionDir)Odenwald.WindowsPerformanceCounterPlugin\bin\$(Configuratio
 xcopy "$(SolutionDir)Odenwald.WindowsPerformanceCounterPlugin\bin\$(ConfigurationName)\*.pdb" .\*.* /Y
 xcopy "$(SolutionDir)Odenwald.OpcUaPlugin\bin\$(ConfigurationName)\*.dll" .\*.* /Y
 xcopy "$(SolutionDir)Odenwald.OpcUaPlugin\bin\$(ConfigurationName)\*.pdb" .\*.* /Y
+xcopy "$(SolutionDir)Odenwald.OpcDaPlugin\bin\$(ConfigurationName)\*.dll" .\*.* /Y
+xcopy "$(SolutionDir)Odenwald.OpcDaPlugin\bin\$(ConfigurationName)\*.pdb" .\*.* /Y
 xcopy "$(SolutionDir)Odenwald.InfluxDbPlugin\bin\$(ConfigurationName)\*.dll" .\*.* /Y
 xcopy "$(SolutionDir)Odenwald.InfluxDbPlugin\bin\$(ConfigurationName)\*.pdb" .\*.* /Y</PostBuildEvent>
   </PropertyGroup>

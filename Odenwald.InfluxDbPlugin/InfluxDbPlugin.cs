@@ -44,7 +44,7 @@ namespace Odenwald.InfluxDbPlugin
         {
             l_logger.Info("InfluxDbAdapter stopped!");
         }
-        
+
 
         public void Write(MetricValue metric)
         {
@@ -55,10 +55,11 @@ namespace Odenwald.InfluxDbPlugin
                 return;
             var opcValue = extension["OpcValue"];
             var opcName = extension["Name"].ToString();
-            var timeStamp = extension["Timestamp"] != null? (DateTime)extension["Timestamp"]:DateTime.Now;
-            Dictionary<string, object> tags = null;
-            if (extension["Tags"] != null)
-                tags = JsonConvert.DeserializeObject<Dictionary<string, object>>((string)extension["Tags"]);
+            var timeStamp = extension["Timestamp"] != null ? (DateTime)extension["Timestamp"] : DateTime.Now;
+            Dictionary<string, object> tags = extension["Tags"] != null ?
+                JsonConvert.DeserializeObject<Dictionary<string, object>>((string)extension["Tags"]) : null;
+            //if (extension["Tags"] != null)
+            //    tags = JsonConvert.DeserializeObject<Dictionary<string, object>>((string)extension["Tags"]);
             var p = new Point()
             {
                 Measurement = opcName,
