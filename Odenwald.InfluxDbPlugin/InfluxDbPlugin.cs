@@ -58,8 +58,7 @@ namespace Odenwald.InfluxDbPlugin
             var timeStamp = extension["Timestamp"] != null ? (DateTime)extension["Timestamp"] : DateTime.Now;
             Dictionary<string, object> tags = extension["Tags"] != null ?
                 JsonConvert.DeserializeObject<Dictionary<string, object>>((string)extension["Tags"]) : null;
-            //if (extension["Tags"] != null)
-            //    tags = JsonConvert.DeserializeObject<Dictionary<string, object>>((string)extension["Tags"]);
+          
             var p = new Point()
             {
                 Measurement = opcName,

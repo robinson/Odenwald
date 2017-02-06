@@ -11,7 +11,7 @@ namespace Odenwald.InfluxDbPlugin
     {
         public static InfluxDbPluginConfig GetConfig()
         {
-            return (InfluxDbPluginConfig)ConfigurationManager.GetSection("Opcua") ?? new InfluxDbPluginConfig();
+            return (InfluxDbPluginConfig)ConfigurationManager.GetSection("InfluxDb") ?? new InfluxDbPluginConfig();
         }
         [ConfigurationProperty("Settings", IsRequired = true)]
         public SettingsConfig Settings
@@ -53,4 +53,5 @@ namespace Odenwald.InfluxDbPlugin
             set { base["Password"] = value; }
         }
     }
+   
 }

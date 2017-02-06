@@ -57,6 +57,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Odenwald.Common\Odenwald.Common.csproj">
+      <Project>{FEF57F91-04C1-4D42-BA2E-737697AB26C1}</Project>
+      <Name>Odenwald.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Odenwald\Odenwald.csproj">
       <Project>{bb7a7712-cc11-4d95-83dc-a0ab28714860}</Project>
       <Name>Odenwald</Name>

@@ -49,9 +49,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Opc\MeasurementDto.cs" />
+    <Compile Include="Opc\OpcHelper.cs" />
     <Compile Include="Opc\OpcPluginConfig.cs" />
     <Compile Include="Opc\OpcMetric.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Util.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

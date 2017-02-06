@@ -25,6 +25,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Odenwald.OpcDaPlugin", "Ode
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Odenwald.Common", "Odenwald.Common\Odenwald.Common.csproj", "{FEF57F91-04C1-4D42-BA2E-737697AB26C1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Odenwald.KafkaProducerPlugin", "Odenwald.KafkaProducerPlugin\Odenwald.KafkaProducerPlugin.csproj", "{EEC9106E-6812-444B-9A5E-59CDF4022D4A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Odenwald.KafkaConsumerPlugin", "Odenwald.KafkaConsumerPlugin\Odenwald.KafkaConsumerPlugin.csproj", "{B9A8E446-DB9F-46E9-BFCD-916A3D8424AA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -67,6 +71,14 @@ Global
 		{FEF57F91-04C1-4D42-BA2E-737697AB26C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FEF57F91-04C1-4D42-BA2E-737697AB26C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FEF57F91-04C1-4D42-BA2E-737697AB26C1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EEC9106E-6812-444B-9A5E-59CDF4022D4A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EEC9106E-6812-444B-9A5E-59CDF4022D4A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EEC9106E-6812-444B-9A5E-59CDF4022D4A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EEC9106E-6812-444B-9A5E-59CDF4022D4A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B9A8E446-DB9F-46E9-BFCD-916A3D8424AA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B9A8E446-DB9F-46E9-BFCD-916A3D8424AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B9A8E446-DB9F-46E9-BFCD-916A3D8424AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B9A8E446-DB9F-46E9-BFCD-916A3D8424AA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -78,5 +90,7 @@ Global
 		{C46F6932-AB4C-4A49-A3BA-1F9690015A48} = {BC6D364C-E228-46F3-B0DC-36E10395334B}
 		{084BE120-923F-4517-850C-17D1D5590AC9} = {5256FABB-EEFB-4508-A51C-EAC828656DE7}
 		{3C3FD86F-220D-418F-B964-3C4590824FCE} = {5256FABB-EEFB-4508-A51C-EAC828656DE7}
+		{EEC9106E-6812-444B-9A5E-59CDF4022D4A} = {5256FABB-EEFB-4508-A51C-EAC828656DE7}
+		{B9A8E446-DB9F-46E9-BFCD-916A3D8424AA} = {5256FABB-EEFB-4508-A51C-EAC828656DE7}
 	EndGlobalSection
 EndGlobal

@@ -135,7 +135,11 @@ xcopy "$(SolutionDir)Odenwald.OpcUaPlugin\bin\$(ConfigurationName)\*.pdb" .\*.* 
 xcopy "$(SolutionDir)Odenwald.OpcDaPlugin\bin\$(ConfigurationName)\*.dll" .\*.* /Y
 xcopy "$(SolutionDir)Odenwald.OpcDaPlugin\bin\$(ConfigurationName)\*.pdb" .\*.* /Y
 xcopy "$(SolutionDir)Odenwald.InfluxDbPlugin\bin\$(ConfigurationName)\*.dll" .\*.* /Y
-xcopy "$(SolutionDir)Odenwald.InfluxDbPlugin\bin\$(ConfigurationName)\*.pdb" .\*.* /Y</PostBuildEvent>
+xcopy "$(SolutionDir)Odenwald.InfluxDbPlugin\bin\$(ConfigurationName)\*.pdb" .\*.* /Y
+xcopy "$(SolutionDir)Odenwald.KafkaProducerPlugin\bin\$(ConfigurationName)\*.dll" .\*.* /Y
+xcopy "$(SolutionDir)Odenwald.KafkaProducerPlugin\bin\$(ConfigurationName)\*.pdb" .\*.* /Y
+xcopy "$(SolutionDir)Odenwald.KafkaConsumerPlugin\bin\$(ConfigurationName)\*.dll" .\*.* /Y
+xcopy "$(SolutionDir)Odenwald.KafkaConsumerPlugin\bin\$(ConfigurationName)\*.pdb" .\*.* /Y</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
     <PreBuildEvent>del "$(SolutionDir)Odenwald.Service\bin\*.*" /Q /F</PreBuildEvent>

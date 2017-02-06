@@ -46,13 +46,13 @@ namespace Odenwald
             var registry = new PluginRegistry();
             l_plugins = registry.CreatePlugins();
 
-            l_interval = config.GeneralSettings.Interval;
-            if (l_interval <= 10)
+            l_interval = config.GeneralSettings.Interval; //ms
+            if (l_interval < 10)
                 l_interval = 10;
 
             l_timeout = config.GeneralSettings.Timeout;
             if (l_timeout <= l_interval)
-                l_timeout = l_interval * 3;
+                l_timeout = l_interval * 300;
             var storeRates = config.GeneralSettings.StoreRates;
             l_aggregator = new Aggregator(l_timeout, storeRates);
             l_metricQueue = new ConcurrentQueue<MetricValue>();
@@ -142,7 +142,7 @@ namespace Odenwald
                     }
                     
                     if (l_interval > 0)
-                        await Task.Delay(l_interval * 1000, l_readCancelToken.Token);
+                        await Task.Delay(l_interval, l_readCancelToken.Token);
                 } while (true);               
             }), l_readCancelToken.Token);
         }
@@ -208,7 +208,7 @@ namespace Odenwald
                 {
                     l_aggregator.RemoveExpiredEntries();
 
-                    await Task.Delay(TimeSpan.FromMilliseconds(l_timeout * 1000), l_writeCancelToken.Token); // <- await with cancellation, delay 1 secs
+                    await Task.Delay(TimeSpan.FromMilliseconds(l_timeout), l_writeCancelToken.Token); // <- await with cancellation, delay 1 secs
                 }
             }, l_writeCancelToken.Token);
 

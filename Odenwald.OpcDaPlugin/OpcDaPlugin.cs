@@ -4,9 +4,7 @@ using Opc;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 using Factory = OpcCom.Factory;
@@ -77,7 +75,7 @@ namespace Odenwald.OpcDaPlugin
         {
             InitializeMeasurements();
             Uri serverUri = new Uri(l_opcDaPluginConfig.Settings.Url);
-            var opcServerUrl = new URL(serverUri.AbsolutePath)
+            var opcServerUrl = new URL(serverUri.ToString())
             {
                 Scheme = serverUri.Scheme,
                 HostName = serverUri.Host
@@ -199,16 +197,23 @@ namespace Odenwald.OpcDaPlugin
         }
         void ReadMeasurement(PolledMeasurement measurement)
         {
-            
-
             var item = new OpcDa.Item { ItemName = measurement.Path };
             if (l_server == null || l_server.GetStatus().ServerState != OpcDa.serverState.running)
-                throw new Exception(String.Format("Server not connected. Cannot read path {0}.",measurement.Name));
+            {
+                l_logger.ErrorFormat(string.Format("Server not connected. Cannot read path {0}.", measurement.Name));
+                throw new Exception(string.Format("Server not connected. Cannot read path {0}.",measurement.Name));
+            }
             var result = l_server.Read(new[] { item })[0];
             if (result == null)
-                throw new Exception("the server replied with an empty response");
+            {
+                l_logger.Error("the server replied with an empty response!!!");
+                throw new Exception("the server replied with an empty response");//if any item cannot read, throw exeption
+            }
             if (result.ResultID.ToString() != "S_OK")
+            {
+                l_logger.ErrorFormat(string.Format("Invalid response from the server. (Response Status: {0}, Opc Tag: {1})", result.ResultID, measurement.Path));
                 throw new Exception(string.Format("Invalid response from the server. (Response Status: {0}, Opc Tag: {1})", result.ResultID, measurement.Path));
+            }
 
             OpcMetric metric = new OpcMetric()
             {
@@ -218,16 +223,13 @@ namespace Odenwald.OpcDaPlugin
                 Timestamp = result.Timestamp
 
             };
-            if (QualifyMetric(ref metric))
+            if (OpcHelper.QualifyMetric(ref metric, l_cache))
             {
                 l_cache[metric.Measurement.Name] = metric.OpcValue;
                 l_metricCollection.Add(metric);
             }
         }
-        bool QualifyMetric(ref OpcMetric metric)
-        {
-            return true;
-        }
+       
         public void Dispose()
         {
             if (l_server != null)
