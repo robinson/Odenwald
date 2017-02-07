@@ -5,7 +5,8 @@ Odenwald is a tool which exchange data from points to destination. It is inspire
 - InfluxDB
 - Kafka
 - Console
-Refer to Wiki for more information.
+
+Please refer to Wiki for more information.
 
 # Disclaimer
 The following binaries belong to the OPC Foundation (https://opcfoundation.org/):
