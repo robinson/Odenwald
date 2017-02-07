@@ -7,7 +7,7 @@ Odenwald is a tool which exchange data from points to destination. It is inspire
 - Console
 
 # Disclaimer
-The following binaries belong to the OPC Foundation. You must become a registered user in order to use them:
+The following binaries belong to the OPC Foundation (https://opcfoundation.org/):
 
 - OPC.Ua.Client.dll
 - OPC.Ua.Core.dll
@@ -16,6 +16,5 @@ The following binaries belong to the OPC Foundation. You must become a registere
 - OpcNetApi.Com.dll
 - OpcNetApi.dll
 
-You must agree to the terms and condition exposed on the OPC Foundation website. Hyla Soft is not responsible of their usage and cannot be held responsible.
-
+You should become a registered user in order to use.
 
