@@ -1,4 +1,17 @@
-﻿using log4net;
+﻿
+// ----------------------------------------------------------------------------
+// Copyright (C) 2017 Robinson.
+// https://github.com/robinson
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+// http://www.apache.org/licenses/LICENSE-2.0
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+using log4net;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -15,7 +28,7 @@ namespace Odenwald
         private readonly IDictionary<string, string> l_meta = new SortedDictionary<string, string>();
         #endregion
 
-        #region IInputMetric Properties
+        #region Properties
         public string PluginName { get; set; }
         public string PluginInstanceName { get; set; }
 
@@ -62,9 +75,7 @@ namespace Odenwald
             l_meta[tagName] = tagValue;
         }
         public string Extension { get; set; } //extension will be a json string
-        #endregion
 
-        #region Properties
         public MetricValue DeepCopy()
         {
             var other = (MetricValue)MemberwiseClone();
@@ -104,9 +115,8 @@ namespace Odenwald
                 l_logger.ErrorFormat("Got exception in json conversion : {0}", ex);
             }
             return (jsonString);
-        }       
+        }
         #endregion
-
 
     }
 }

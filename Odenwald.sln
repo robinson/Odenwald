@@ -5,15 +5,11 @@ VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Odenwald", "Odenwald\Odenwald.csproj", "{BB7A7712-CC11-4D95-83DC-A0AB28714860}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Odenwald.Service", "Odenwald.Service\Odenwald.Service.csproj", "{AD130047-5631-4F12-B357-82B45E671C83}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{BC6D364C-E228-46F3-B0DC-36E10395334B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Plugins", "Plugins", "{5256FABB-EEFB-4508-A51C-EAC828656DE7}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Odenwald.ConsolePlugin", "Odenwald.ConsolePlugin\Odenwald.ConsolePlugin.csproj", "{BA07862A-586A-47AC-9069-7D1904973A83}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Odenwald.WindowsPerformanceCounterPlugin", "Odenwald.WindowsPerformanceCounterPlugin\Odenwald.WindowsPerformanceCounterPlugin.csproj", "{623527DA-7F19-4326-98D8-EA833857367C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Odenwald.OpcUaPlugin", "Odenwald.OpcUaPlugin\Odenwald.OpcUaPlugin.csproj", "{712B2914-BF62-4278-BFE2-EB6925760839}"
 EndProject
@@ -29,6 +25,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Odenwald.KafkaProducerPlugi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Odenwald.KafkaConsumerPlugin", "Odenwald.KafkaConsumerPlugin\Odenwald.KafkaConsumerPlugin.csproj", "{B9A8E446-DB9F-46E9-BFCD-916A3D8424AA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Odenwald.App", "Odenwald.App\Odenwald.App.csproj", "{AD130047-5631-4F12-B357-82B45E671C83}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,18 +37,10 @@ Global
 		{BB7A7712-CC11-4D95-83DC-A0AB28714860}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BB7A7712-CC11-4D95-83DC-A0AB28714860}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BB7A7712-CC11-4D95-83DC-A0AB28714860}.Release|Any CPU.Build.0 = Release|Any CPU
-		{AD130047-5631-4F12-B357-82B45E671C83}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{AD130047-5631-4F12-B357-82B45E671C83}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{AD130047-5631-4F12-B357-82B45E671C83}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{AD130047-5631-4F12-B357-82B45E671C83}.Release|Any CPU.Build.0 = Release|Any CPU
 		{BA07862A-586A-47AC-9069-7D1904973A83}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{BA07862A-586A-47AC-9069-7D1904973A83}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BA07862A-586A-47AC-9069-7D1904973A83}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BA07862A-586A-47AC-9069-7D1904973A83}.Release|Any CPU.Build.0 = Release|Any CPU
-		{623527DA-7F19-4326-98D8-EA833857367C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{623527DA-7F19-4326-98D8-EA833857367C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{623527DA-7F19-4326-98D8-EA833857367C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{623527DA-7F19-4326-98D8-EA833857367C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{712B2914-BF62-4278-BFE2-EB6925760839}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{712B2914-BF62-4278-BFE2-EB6925760839}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{712B2914-BF62-4278-BFE2-EB6925760839}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -79,13 +69,16 @@ Global
 		{B9A8E446-DB9F-46E9-BFCD-916A3D8424AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B9A8E446-DB9F-46E9-BFCD-916A3D8424AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B9A8E446-DB9F-46E9-BFCD-916A3D8424AA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AD130047-5631-4F12-B357-82B45E671C83}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AD130047-5631-4F12-B357-82B45E671C83}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AD130047-5631-4F12-B357-82B45E671C83}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AD130047-5631-4F12-B357-82B45E671C83}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{BA07862A-586A-47AC-9069-7D1904973A83} = {5256FABB-EEFB-4508-A51C-EAC828656DE7}
-		{623527DA-7F19-4326-98D8-EA833857367C} = {5256FABB-EEFB-4508-A51C-EAC828656DE7}
 		{712B2914-BF62-4278-BFE2-EB6925760839} = {5256FABB-EEFB-4508-A51C-EAC828656DE7}
 		{C46F6932-AB4C-4A49-A3BA-1F9690015A48} = {BC6D364C-E228-46F3-B0DC-36E10395334B}
 		{084BE120-923F-4517-850C-17D1D5590AC9} = {5256FABB-EEFB-4508-A51C-EAC828656DE7}

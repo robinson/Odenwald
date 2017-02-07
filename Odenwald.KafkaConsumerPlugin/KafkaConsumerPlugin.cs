@@ -78,7 +78,7 @@ namespace Odenwald.KafkaConsumerPlugin
 
         public void Stop()
         {
-
+            l_logger.Info("KafkaConsumer plugin stopped.");
         }
         public void Dispose()
         {

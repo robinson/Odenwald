@@ -57,8 +57,8 @@ namespace Odenwald.InfluxDbPlugin
             var opcName = extension["Name"].ToString();
             var timeStamp = extension["Timestamp"] != null ? (DateTime)extension["Timestamp"] : DateTime.Now;
             Dictionary<string, object> tags = extension["Tags"] != null ?
-                JsonConvert.DeserializeObject<Dictionary<string, object>>((string)extension["Tags"]) : null;
-          
+                JsonConvert.DeserializeObject<Dictionary<string, object>>(extension["Tags"].ToString()) : null;
+
             var p = new Point()
             {
                 Measurement = opcName,
@@ -68,7 +68,7 @@ namespace Odenwald.InfluxDbPlugin
                     {"Value",opcValue},
                     {"Timestamp", timeStamp}
                 },
-                Tags = tags// metric.MetaData.ToDictionary(k => k.Key, k => k.Value == "" || k.Value == null ? null : (object)k.Value)
+                Tags = tags// tags.ToDictionary(k => k.Key, k => k.Value == "" || k.Value == null ? null : (object)k.Value)// metric.MetaData.ToDictionary(k => k.Key, k => k.Value == "" || k.Value == null ? null : (object)k.Value)
             };
             var writeResponse = l_influxDbClient.WriteAsync(l_influxDbConfig.Settings.Database, p);
 

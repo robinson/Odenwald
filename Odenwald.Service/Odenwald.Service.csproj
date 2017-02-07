@@ -49,8 +49,8 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="log4net, Version=1.2.15.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
-      <HintPath>..\packages\log4net.2.0.5\lib\net45-full\log4net.dll</HintPath>
+    <Reference Include="log4net, Version=2.0.7.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <HintPath>..\packages\log4net.2.0.7\lib\net45-full\log4net.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Threading.Tasks, Version=1.0.12.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
@@ -130,16 +130,22 @@
 xcopy "$(SolutionDir)Odenwald.ConsolePlugin\bin\$(ConfigurationName)\*.pdb" .\*.* /Y
 xcopy "$(SolutionDir)Odenwald.WindowsPerformanceCounterPlugin\bin\$(ConfigurationName)\*.dll" .\*.* /Y
 xcopy "$(SolutionDir)Odenwald.WindowsPerformanceCounterPlugin\bin\$(ConfigurationName)\*.pdb" .\*.* /Y
+xcopy "$(SolutionDir)Odenwald.WindowsPerformanceCounterPlugin\bin\$(ConfigurationName)\*.config" .\Config\*.* /Y
 xcopy "$(SolutionDir)Odenwald.OpcUaPlugin\bin\$(ConfigurationName)\*.dll" .\*.* /Y
 xcopy "$(SolutionDir)Odenwald.OpcUaPlugin\bin\$(ConfigurationName)\*.pdb" .\*.* /Y
+xcopy "$(SolutionDir)Odenwald.OpcUaPlugin\bin\$(ConfigurationName)\*.config" .\Config\*.* /Y
 xcopy "$(SolutionDir)Odenwald.OpcDaPlugin\bin\$(ConfigurationName)\*.dll" .\*.* /Y
 xcopy "$(SolutionDir)Odenwald.OpcDaPlugin\bin\$(ConfigurationName)\*.pdb" .\*.* /Y
+xcopy "$(SolutionDir)Odenwald.OpcDaPlugin\bin\$(ConfigurationName)\*.config" .\Config\*.* /Y
 xcopy "$(SolutionDir)Odenwald.InfluxDbPlugin\bin\$(ConfigurationName)\*.dll" .\*.* /Y
 xcopy "$(SolutionDir)Odenwald.InfluxDbPlugin\bin\$(ConfigurationName)\*.pdb" .\*.* /Y
+xcopy "$(SolutionDir)Odenwald.InfluxDbPlugin\bin\$(ConfigurationName)\*.config" .\Config\*.* /Y
 xcopy "$(SolutionDir)Odenwald.KafkaProducerPlugin\bin\$(ConfigurationName)\*.dll" .\*.* /Y
 xcopy "$(SolutionDir)Odenwald.KafkaProducerPlugin\bin\$(ConfigurationName)\*.pdb" .\*.* /Y
+xcopy "$(SolutionDir)Odenwald.KafkaProducerPlugin\bin\$(ConfigurationName)\*.config" .\Config\*.* /Y
 xcopy "$(SolutionDir)Odenwald.KafkaConsumerPlugin\bin\$(ConfigurationName)\*.dll" .\*.* /Y
-xcopy "$(SolutionDir)Odenwald.KafkaConsumerPlugin\bin\$(ConfigurationName)\*.pdb" .\*.* /Y</PostBuildEvent>
+xcopy "$(SolutionDir)Odenwald.KafkaConsumerPlugin\bin\$(ConfigurationName)\*.pdb" .\*.* /Y
+xcopy "$(SolutionDir)Odenwald.KafkaConsumerPlugin\bin\$(ConfigurationName)\*.config" .\Config\*.* /Y</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
     <PreBuildEvent>del "$(SolutionDir)Odenwald.Service\bin\*.*" /Q /F</PreBuildEvent>

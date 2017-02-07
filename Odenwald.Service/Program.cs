@@ -15,7 +15,7 @@ namespace Odenwald.Runner
         public static void Main(string[] args)
         {
             
-            var config = ConfigurationManager.GetSection("OdenwaldConfig") as OdenwaldConfig;
+            var config = ConfigurationManager.GetSection("Odenwald") as OdenwaldConfig;
             if (config == null)
             {
                 l_logger.Error("Main(): cannot get configuration section");

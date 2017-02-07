@@ -34,8 +34,8 @@
       <HintPath>..\packages\InfluxDB.Net-Main.1.0.20\lib\net45\InfluxDB.Net.dll</HintPath>
     </Reference>
     <Reference Include="log4net, Version=2.0.7.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\log4net.2.0.5\lib\net45-full\log4net.dll</HintPath>
+      <HintPath>..\packages\log4net.2.0.7\lib\net45-full\log4net.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -56,7 +56,6 @@
   <ItemGroup>
     <Compile Include="InfluxDbPlugin.cs" />
     <Compile Include="InfluxDbPluginConfig.cs" />
-    <Compile Include="InfluxDbMetric.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -66,7 +65,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="InfluxDb.config" />
+    <None Include="InfluxDb.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>

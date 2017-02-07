@@ -1,11 +1,23 @@
-﻿using log4net;
+﻿
+// ----------------------------------------------------------------------------
+// Copyright (C) 2017 Robinson.
+// https://github.com/robinson
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+// http://www.apache.org/licenses/LICENSE-2.0
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+using log4net;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -35,7 +47,7 @@ namespace Odenwald
         #region .ctor
         public MetricsCollector()
         {
-            var config = ConfigurationManager.GetSection("OdenwaldConfig") as OdenwaldConfig;
+            var config = ConfigurationManager.GetSection("Odenwald") as OdenwaldConfig;
             if (config == null)
             {
                 l_logger.Error("Cannot get configuration section");
