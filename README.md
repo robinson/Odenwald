@@ -5,6 +5,7 @@ Odenwald is a tool which exchange data from points to destination. It is inspire
 - InfluxDB
 - Kafka
 - Console
+Refer to Wiki for more information.
 
 # Disclaimer
 The following binaries belong to the OPC Foundation (https://opcfoundation.org/):
@@ -17,4 +18,11 @@ The following binaries belong to the OPC Foundation (https://opcfoundation.org/)
 - OpcNetApi.dll
 
 You should become a registered user in order to use.
+
+# TODO
+- Installation package use wix toolset.
+- A small web app to monitor the service.
+- MongoDB plugin.
+- Update document. 
+
 
