@@ -1,7 +1,7 @@
 # Updating...
 TO BE UPDATING...
 # Summary
-Odenwald is a tool which exchange data from points to destination, which and support:
+Odenwald is a tool which switch the data from points to destination, and supports following plugins:
 - OPC UA
 - OPC DA (opc classic)
 - InfluxDB
