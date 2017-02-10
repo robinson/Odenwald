@@ -117,9 +117,7 @@ namespace Odenwald
                                 // skip if plugin is not a readplugin, it might be a writeplugin
                                 continue;
                             }
-                            IList<MetricValue> metricValues = readPlugin.Read();
-                            if (metricValues == null || !metricValues.Any())
-                                continue;
+                            IList<MetricValue> metricValues = readPlugin.Read();                           
                             if (metricValues == null || !metricValues.Any())
                             {
                                 l_logger.Debug("metric null!");
