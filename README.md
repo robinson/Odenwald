@@ -25,7 +25,11 @@ Beside some popular packages as thousands opensouces (such as: log4net, newtonso
 - kafka-net
 
 # Reference
-Odenwald is inspired from:
+In order to test with OPC UA you should register and get the sample OPC UA server as (https://github.com/OPCFoundation/UA-.NET/tree/master/SampleApplications/Samples/Server)
+In case of OPC DA testing, you are able to use OPC Classic Demo server from Softing (of course before using it, you should register as a user, althought that is a free of charge software),
+http://industrial.softing.com/en/products/software/opc-development-toolkits/opc-classic-development-toolkits/opc-classic-da-ae-xml-da-client-and-server-toolkit-for-windows.html
+
+Besides, Odenwald refers from these systems:
 - collectd (https://github.com/collectd/collectd)
 - CollectdWin (https://github.com/bloomberg/collectdwin)
 
