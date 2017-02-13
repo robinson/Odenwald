@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Odenwald.Common
 {
-    public static class Util
+    public static class Util 
     {
         static ILog l_logger = LogManager.GetLogger(typeof(Util));
 

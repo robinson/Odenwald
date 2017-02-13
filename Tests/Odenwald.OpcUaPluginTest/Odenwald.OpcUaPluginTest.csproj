@@ -34,10 +34,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Opc.Ua.Client">
-      <HintPath>..\..\Odenwald.OpcUaPlugin\libs\Opc.Ua.Client.dll</HintPath>
+      <HintPath>..\..\libs\Opc.Ua.Client.dll</HintPath>
     </Reference>
     <Reference Include="Opc.Ua.Core">
-      <HintPath>..\..\Odenwald.OpcUaPlugin\libs\Opc.Ua.Core.dll</HintPath>
+      <HintPath>..\..\libs\Opc.Ua.Core.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
